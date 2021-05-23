@@ -3,9 +3,15 @@ package ga.negyahu.music.utils;
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.dto.AccountCreateDto;
 import ga.negyahu.music.account.entity.Address;
+import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.account.service.AccountService;
+import ga.negyahu.music.security.AccountContext;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,12 +21,13 @@ public class TestUtils {
     public static final String DEFAULT_NAME = "양우정";
     public static final String DEFAULT_NICKNAME = "갓우정";
     public static final String DEFAULT_PASSWORD = "dbwjd123";
-    public static final Address DEFAULT_ADDRESS = new Address("02058","서울시 성북구 북악산로 1111","성신여대입구역 5번출구");
+    public static final Address DEFAULT_ADDRESS = new Address("02058", "서울시 성북구 북악산로 1111",
+        "성신여대입구역 5번출구");
 
     @Autowired
     private AccountService accountService;
 
-    public static final Account createAccount(){
+    public static final Account createAccount() {
         return Account.builder()
             .email(DEFAULT_EMAIL)
             .address(DEFAULT_ADDRESS)
@@ -28,6 +35,7 @@ public class TestUtils {
             .username(DEFAULT_NAME)
             .nickname(DEFAULT_NICKNAME)
             .country("ko-KR")
+            .role(Role.USER)
             .build();
     }
 
@@ -43,7 +51,14 @@ public class TestUtils {
             .build();
     }
 
-    public Account signUpAccount(Account account){
+    public static AccountContext createAccountContest(Account account) {
+        Role role = account.getRole();
+        List<GrantedAuthority> roles = new ArrayList<>();
+        roles.add(new SimpleGrantedAuthority(role.toString()));
+        return new AccountContext(account, roles);
+    }
+
+    public Account signUpAccount(Account account) {
         return accountService.signUp(account);
     }
 
