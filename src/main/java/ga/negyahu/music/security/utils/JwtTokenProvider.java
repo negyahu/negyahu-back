@@ -10,9 +10,12 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,8 +29,8 @@ public class JwtTokenProvider {
     private final long expireTime;
     private Key key;
 
-    public JwtTokenProvider(@Value("jwt.secret") String secret,
-        @Value("jwt.expire-time") long expireTime) {
+    public JwtTokenProvider(@Value("${jwt.secret}") String secret,
+        @Value("${jwt.expire-time}") Long expireTime) {
         this.secret = secret;
         this.expireTime = expireTime * 1000L;
 
@@ -57,7 +60,7 @@ public class JwtTokenProvider {
         return new Date(now + this.expireTime);
     }
 
-    public Account resolveToken(String token) {
+    public Authentication resolveToken(String token) {
 
         Claims claims = Jwts.parserBuilder()
             .setSigningKey(key)
@@ -69,11 +72,20 @@ public class JwtTokenProvider {
         String role = (String) claims.get("auth");
         String nickname = (String) claims.get("nickname");
 
-        return Account.builder()
+        Account account = Account.builder()
             .role(Role.valueOf(role))
             .email(email)
             .nickname(nickname)
             .build();
+
+      return getUserToken(account);
+    }
+    private UsernamePasswordAuthenticationToken getUserToken(Account account){
+        AccountContext accountContext = new AccountContext(account,
+            List.of(new SimpleGrantedAuthority(account.getRole().toString())));
+
+        return new UsernamePasswordAuthenticationToken(accountContext, null,
+            accountContext.getAuthorities());
     }
 
     public boolean validate(String token) {

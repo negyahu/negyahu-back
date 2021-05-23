@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 
 public class JwtTokenProviderTest {
 
@@ -22,15 +23,16 @@ public class JwtTokenProviderTest {
 
     private Account account;
     private AccountContext accountContest;
+
     @BeforeEach
     public void init() {
-        this.provider = new JwtTokenProvider(secretKey,time);
+        this.provider = new JwtTokenProvider(secretKey, time);
         this.account = TestUtils.createAccount();
         this.accountContest = TestUtils.createAccountContest(account);
     }
 
     @Test
-    public void 토큰생성_테스트(){
+    public void 토큰생성_테스트() {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
             this.accountContest, null, accountContest.getAuthorities());
@@ -39,18 +41,20 @@ public class JwtTokenProviderTest {
     }
 
     @Test
-    public void 토큰변환_테스트(){
+    public void 토큰변환_테스트() {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
             this.accountContest, null, accountContest.getAuthorities());
 
         String jwt = this.provider.createToken(authenticationToken);
 
-        Account account = this.provider.resolveToken(jwt);
+        Authentication authentication = this.provider.resolveToken(jwt);
+        AccountContext context = (AccountContext) authentication.getPrincipal();
+        Account account = context.getAccount();
 
-        assertNotNull(account);
-        assertEquals(this.account.getNickname(),account.getNickname());
-        assertEquals(this.account.getRole(),account.getRole());
+        assertNotNull(this.account);
+        assertEquals(this.account.getNickname(), account.getNickname());
+        assertEquals(this.account.getRole(), account.getRole());
     }
 
     @Test
@@ -60,7 +64,7 @@ public class JwtTokenProviderTest {
         // given : 토큰의 유효시간을 1밀리세컨트로 변환
         Field expireTime = JwtTokenProvider.class.getDeclaredField("expireTime");
         expireTime.setAccessible(true);
-        expireTime.setLong(this.provider,Long.valueOf(1));
+        expireTime.setLong(this.provider, Long.valueOf(1));
 
         // when : 토큰 발급, 토큰변환
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
@@ -84,6 +88,17 @@ public class JwtTokenProviderTest {
         // then : 토큰 유효시간이 10분(600s)이기 때문에 true 반환
         boolean result = this.provider.validate(token);
         assertTrue(result);
+    }
+
+    @Test
+    public void 토큰_실패_유요하지않은_토큰_실패()
+        throws InterruptedException, NoSuchFieldException, IllegalAccessException {
+
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+
+        // then : 토큰 유효시간이 10분(600s)이기 때문에 true 반환
+        boolean result = this.provider.validate(token);
+        assertFalse(result);
     }
 
 

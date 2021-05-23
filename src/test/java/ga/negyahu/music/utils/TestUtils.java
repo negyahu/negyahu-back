@@ -9,12 +9,16 @@ import ga.negyahu.music.account.service.AccountService;
 import ga.negyahu.music.security.AccountContext;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 public class TestUtils {
 
     public static final String DEFAULT_EMAIL = "yangfriendship.dev@gmail.com";
@@ -23,6 +27,9 @@ public class TestUtils {
     public static final String DEFAULT_PASSWORD = "dbwjd123";
     public static final Address DEFAULT_ADDRESS = new Address("02058", "서울시 성북구 북악산로 1111",
         "성신여대입구역 5번출구");
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     private AccountService accountService;
@@ -59,7 +66,8 @@ public class TestUtils {
     }
 
     public Account signUpAccount(Account account) {
-        return accountService.signUp(account);
+        Account account1 = accountService.signUp(account);
+        return account1;
     }
 
 }
