@@ -149,6 +149,8 @@ public class AccountControllerTest {
             .content(this.objectMapper.writeValueAsString(updateDto))
         );
 
+        step1.andExpect(status().isNoContent());
+
         Account find = accountRepository.findFirstByEmail(account.getEmail())
             .orElseThrow(() -> {
                 throw new AccountNotFoundException();
@@ -158,7 +160,37 @@ public class AccountControllerTest {
         assertEquals(updateDto.getAddress(), find.getAddress());
         assertEquals(updateDto.getUsername(), find.getUsername());
         assertEquals(updateDto.getCountry(), find.getCountry());
+    }
 
+    @Test
+    public void 다른_유저정보_수정_실패() throws Exception {
+        // given : 두개의 게정
+        Account account = TestUtils.createAccount();
+        String jwt = testUtils.signSupAndLogin(account);
+
+        Account account2 = TestUtils.createAccount();
+        account2.setEmail("email@email.com");
+        account2.setNickname("김유저");
+        String jwt2 = testUtils.signSupAndLogin(account2);
+
+        AccountUpdateDto updateDto = AccountUpdateDto.builder()
+            .country("newcountry")
+            .nickname("정우양")
+            .address(new Address("101010", "서울시 동대문구 용두동", "용두아파트"))
+            .username("우정양")
+            .password("dnwjd123@@@@")
+            .country("CN_zh")
+            .build();
+
+        // when : 1번 계정의 정보를 2번 계정이 수정
+        ResultActions step1 = this.mockMvc.perform(patch(ROOT_URI + "/{id}", account.getId())
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, jwt2)
+            .content(this.objectMapper.writeValueAsString(updateDto))
+        );
+
+        // then : Forbidden 403
+        step1.andExpect(status().isForbidden());
     }
 
 }

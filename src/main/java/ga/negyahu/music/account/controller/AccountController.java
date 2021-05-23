@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(ROOT_URI)
+@RequestMapping(value = ROOT_URI,consumes = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class AccountController {
 
@@ -47,7 +47,7 @@ public class AccountController {
         webDataBinder.addValidators(createDtoValidator);
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseEntity create(@RequestBody @Valid AccountCreateDto accountCreateDto,
         Errors errors) {
         if (errors.hasErrors()) {
@@ -60,7 +60,7 @@ public class AccountController {
         return ResponseEntity.created(uri).build();
     }
 
-    @GetMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}")
     public ResponseEntity fetch(@PathVariable Long id, @LoginUser Account loginUser) {
         Account account = this.accountService.fetch(id);
 
@@ -73,7 +73,7 @@ public class AccountController {
         return ResponseEntity.ok().body(accountDto);
     }
 
-    @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/{id}")
     public ResponseEntity patch(@PathVariable Long id, @LoginUser Account loginUser,
         @Valid @RequestBody AccountUpdateDto accountDto,Errors errors) {
 
