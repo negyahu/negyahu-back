@@ -72,10 +72,12 @@ public class JwtTokenProvider {
         String role = (String) claims.get("auth");
         String nickname = (String) claims.get("nickname");
 
+        Role role1 = Role.valueOf(role);
         Account account = Account.builder()
-            .role(Role.valueOf(role))
+            .role(role1)
             .email(email)
             .nickname(nickname)
+            .password("")
             .build();
 
       return getUserToken(account);

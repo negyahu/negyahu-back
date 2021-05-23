@@ -22,9 +22,11 @@ import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 public class SecurityConfigTest {
 
     @Autowired

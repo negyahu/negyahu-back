@@ -56,7 +56,7 @@ public class AccountControllerTest {
         // then : PasswordEncode, Default role is 'user'
         assertDoesNotThrow(() -> {
                 Account account = accountRepository.findFirstByEmail(createDto.getEmail()).get();
-                assertEquals(1L, account.getId());
+                assertNotNull(account.getId());
                 assertEquals(createDto.getEmail(), account.getEmail());
                 assertTrue(passwordEncoder.matches(createDto.getPassword(), account.getPassword()));
                 assertEquals(Role.USER, account.getRole());
