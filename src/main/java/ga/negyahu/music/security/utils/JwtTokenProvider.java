@@ -71,9 +71,11 @@ public class JwtTokenProvider {
         String email = (String) claims.get("aud");
         String role = (String) claims.get("auth");
         String nickname = (String) claims.get("nickname");
+        Integer id = (Integer) claims.get("id");
 
         Role role1 = Role.valueOf(role);
         Account account = Account.builder()
+            .id(Long.valueOf(id))
             .role(role1)
             .email(email)
             .nickname(nickname)

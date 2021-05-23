@@ -4,10 +4,14 @@ import static ga.negyahu.music.account.controller.AccountController.ROOT_URI;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.dto.AccountCreateDto;
+import ga.negyahu.music.account.dto.AccountDto;
+import ga.negyahu.music.account.dto.AccountOwnerDto;
 import ga.negyahu.music.account.service.AccountService;
 import ga.negyahu.music.mapstruct.AccountMapper;
+import ga.negyahu.music.security.annotation.LoginUser;
 import ga.negyahu.music.validator.AccountCreateDtoValidator;
 import java.net.URI;
+import java.util.Objects;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -17,6 +21,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,8 +45,9 @@ public class AccountController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity create(@RequestBody @Valid AccountCreateDto accountCreateDto, Errors errors){
-        if(errors.hasErrors()) {
+    public ResponseEntity create(@RequestBody @Valid AccountCreateDto accountCreateDto,
+        Errors errors) {
+        if (errors.hasErrors()) {
             return ResponseEntity.badRequest().body(errors);
         }
         Account account = accountMapper.from(accountCreateDto);
@@ -51,12 +57,18 @@ public class AccountController {
         return ResponseEntity.created(uri).build();
     }
 
-    @GetMapping(value = "/{id}",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity fetch(@PathVariable Long id){
+    @GetMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity fetch(@PathVariable Long id, @LoginUser Account loginUser) {
         Account account = this.accountService.fetch(id);
-        return ResponseEntity.ok(account);
-    }
 
+        if (Objects.nonNull(loginUser) && Objects.equals(loginUser.getId(), account.getId())) {
+            AccountOwnerDto dto = accountMapper.toOwnerDto(account);
+            return ResponseEntity.ok().body(dto);
+        }
+
+        AccountDto accountDto = accountMapper.toDto(account);
+        return ResponseEntity.ok().body(accountDto);
+    }
 
 
 }

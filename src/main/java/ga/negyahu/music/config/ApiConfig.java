@@ -53,7 +53,7 @@ public class ApiConfig {
         objectMapper.registerModule(javaTimeModule);
 
         //Snake case setting
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+//        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         return objectMapper;
     }
 

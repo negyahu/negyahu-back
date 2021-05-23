@@ -22,20 +22,21 @@ public class JwtTokenProviderTest {
     private final long time = 600L;
 
     private Account account;
-    private AccountContext accountContest;
+    private AccountContext accountContext;
 
     @BeforeEach
     public void init() {
         this.provider = new JwtTokenProvider(secretKey, time);
         this.account = TestUtils.createAccount();
-        this.accountContest = TestUtils.createAccountContest(account);
+        this.account.setId(1L);
+        this.accountContext = TestUtils.createAccountContest(account);
     }
 
     @Test
     public void 토큰생성_테스트() {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            this.accountContest, null, accountContest.getAuthorities());
+            this.accountContext, null, accountContext.getAuthorities());
 
         String jwt = this.provider.createToken(authenticationToken);
     }
@@ -44,7 +45,7 @@ public class JwtTokenProviderTest {
     public void 토큰변환_테스트() {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            this.accountContest, null, accountContest.getAuthorities());
+            this.accountContext, null, accountContext.getAuthorities());
 
         String jwt = this.provider.createToken(authenticationToken);
 
@@ -68,7 +69,7 @@ public class JwtTokenProviderTest {
 
         // when : 토큰 발급, 토큰변환
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            this.accountContest, null, accountContest.getAuthorities());
+            this.accountContext, null, accountContext.getAuthorities());
         String token = this.provider.createToken(authenticationToken);
 
         // then : 토큰 유효기간이 지났기 때문에, false 반환
@@ -82,7 +83,7 @@ public class JwtTokenProviderTest {
 
         // when : 토큰 발급, 토큰변환
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            this.accountContest, null, accountContest.getAuthorities());
+            this.accountContext, null, accountContext.getAuthorities());
         String token = this.provider.createToken(authenticationToken);
 
         // then : 토큰 유효시간이 10분(600s)이기 때문에 true 반환

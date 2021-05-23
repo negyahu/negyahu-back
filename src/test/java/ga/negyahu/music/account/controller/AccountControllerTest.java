@@ -4,6 +4,7 @@ import static ga.negyahu.music.account.controller.AccountController.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -22,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -82,6 +85,43 @@ public class AccountControllerTest {
         step1.andExpect(jsonPath("$", hasSize(2)))
             .andExpect(jsonPath("$[0].field").exists())
             ;
+    }
+
+    @Test
+    public void 본인_계정_조회() throws Exception {
+        Account account = TestUtils.createAccount();
+        String token = testUtils.signSupAndLogin(account);
+        ResultActions step1 = this.mockMvc.perform(get(ROOT_URI + "/{id}", account.getId())
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(HttpHeaders.AUTHORIZATION, token)
+        );
+        step1.andDo(print());
+
+        step1.andExpect(jsonPath("password").doesNotExist())
+            .andExpect(jsonPath("memberShip").exists());
+    }
+
+    @Test
+    public void 다른_회원_조회() throws Exception {
+        Account account = TestUtils.createAccount();
+        Account save = testUtils.signUpAccount(account);
+        ResultActions step1 = this.mockMvc.perform(get(ROOT_URI + "/{id}", account.getId())
+            .contentType(APPLICATION_JSON_VALUE)
+        );
+        step1.andDo(print());
+
+        step1.andExpect(jsonPath("password").doesNotExist())
+                .andExpect(jsonPath("memberShip").doesNotExist());
+    }
+
+    @Test
+    public void 존재하지않는_회원_조회() throws Exception{
+        ResultActions step1 = this.mockMvc.perform(get(ROOT_URI + "/{id}", 1L)
+            .contentType(APPLICATION_JSON_VALUE)
+        );
+        step1.andDo(print());
+
+        step1.andExpect(status().isBadRequest());
     }
 
 }
