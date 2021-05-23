@@ -6,10 +6,12 @@ import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.dto.AccountCreateDto;
 import ga.negyahu.music.account.dto.AccountDto;
 import ga.negyahu.music.account.dto.AccountOwnerDto;
+import ga.negyahu.music.account.dto.AccountUpdateDto;
 import ga.negyahu.music.account.service.AccountService;
 import ga.negyahu.music.mapstruct.AccountMapper;
 import ga.negyahu.music.security.annotation.LoginUser;
 import ga.negyahu.music.validator.AccountCreateDtoValidator;
+import ga.negyahu.music.validator.AccountUpdateDtoValidator;
 import java.net.URI;
 import java.util.Objects;
 import javax.validation.Valid;
@@ -38,6 +40,7 @@ public class AccountController {
 
     private final AccountService accountService;
     private final AccountCreateDtoValidator createDtoValidator;
+    private final AccountUpdateDtoValidator updateDtoValidator;
 
     @InitBinder("accountCreateDto")
     public void binder(WebDataBinder webDataBinder) {
@@ -68,6 +71,27 @@ public class AccountController {
 
         AccountDto accountDto = accountMapper.toDto(account);
         return ResponseEntity.ok().body(accountDto);
+    }
+
+    @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity patch(@PathVariable Long id, @LoginUser Account loginUser,
+        @Valid @RequestBody AccountUpdateDto accountDto,Errors errors) {
+
+        // Form validation
+        updateDtoValidator.validate(accountDto,errors);
+        if(errors.hasErrors()){
+            return ResponseEntity.badRequest().body(errors);
+        }
+        // Check owner
+        if(Objects.isNull(loginUser) || !Objects.equals(loginUser.getId(),id)) {
+            return ResponseEntity.status(403).build();
+        }
+        // Update
+        Account account = accountMapper.from(accountDto);
+        account.setId(id);
+        Account update = accountService.update(account);
+
+        return ResponseEntity.noContent().build();
     }
 
 

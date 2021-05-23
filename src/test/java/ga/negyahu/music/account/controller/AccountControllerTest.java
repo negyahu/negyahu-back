@@ -3,8 +3,10 @@ package ga.negyahu.music.account.controller;
 import static ga.negyahu.music.account.controller.AccountController.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -14,8 +16,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.dto.AccountCreateDto;
+import ga.negyahu.music.account.dto.AccountUpdateDto;
+import ga.negyahu.music.account.entity.Address;
 import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.repository.AccountRepository;
+import ga.negyahu.music.exception.AccountNotFoundException;
 import ga.negyahu.music.utils.TestUtils;
 import java.util.Optional;
 import org.hamcrest.Matchers;
@@ -84,7 +89,7 @@ public class AccountControllerTest {
 
         step1.andExpect(jsonPath("$", hasSize(2)))
             .andExpect(jsonPath("$[0].field").exists())
-            ;
+        ;
     }
 
     @Test
@@ -93,7 +98,7 @@ public class AccountControllerTest {
         String token = testUtils.signSupAndLogin(account);
         ResultActions step1 = this.mockMvc.perform(get(ROOT_URI + "/{id}", account.getId())
             .contentType(APPLICATION_JSON_VALUE)
-            .header(HttpHeaders.AUTHORIZATION, token)
+            .header(AUTHORIZATION, token)
         );
         step1.andDo(print());
 
@@ -111,17 +116,49 @@ public class AccountControllerTest {
         step1.andDo(print());
 
         step1.andExpect(jsonPath("password").doesNotExist())
-                .andExpect(jsonPath("memberShip").doesNotExist());
+            .andExpect(jsonPath("memberShip").doesNotExist());
     }
 
     @Test
-    public void 존재하지않는_회원_조회() throws Exception{
+    public void 존재하지않는_회원_조회() throws Exception {
         ResultActions step1 = this.mockMvc.perform(get(ROOT_URI + "/{id}", 1L)
             .contentType(APPLICATION_JSON_VALUE)
         );
         step1.andDo(print());
 
         step1.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void 회원정보수정_성공() throws Exception {
+        Account account = TestUtils.createAccount();
+        String jwt = testUtils.signSupAndLogin(account);
+
+        AccountUpdateDto updateDto = AccountUpdateDto.builder()
+            .country("newcountry")
+            .nickname("정우양")
+            .address(new Address("101010", "서울시 동대문구 용두동", "용두아파트"))
+            .username("우정양")
+            .password("dnwjd123@@@@")
+            .country("CN_zh")
+            .build();
+
+        ResultActions step1 = this.mockMvc.perform(patch(ROOT_URI + "/{id}", account.getId())
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, jwt)
+            .content(this.objectMapper.writeValueAsString(updateDto))
+        );
+
+        Account find = accountRepository.findFirstByEmail(account.getEmail())
+            .orElseThrow(() -> {
+                throw new AccountNotFoundException();
+            });
+
+        assertEquals(updateDto.getNickname(), find.getNickname());
+        assertEquals(updateDto.getAddress(), find.getAddress());
+        assertEquals(updateDto.getUsername(), find.getUsername());
+        assertEquals(updateDto.getCountry(), find.getCountry());
+
     }
 
 }

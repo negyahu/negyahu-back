@@ -9,4 +9,6 @@ public interface AccountService {
     Account signUp(Account account);
 
     Account fetch(Long id);
+
+    Account update(Account account);
 }
