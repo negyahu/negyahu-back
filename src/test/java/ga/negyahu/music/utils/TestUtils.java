@@ -36,7 +36,7 @@ public class TestUtils {
     @Autowired
     private JwtTokenProvider provider;
 
-    public static final Account createAccount() {
+    public static final Account createDefaultAccount() {
         return Account.builder()
             .email(DEFAULT_EMAIL)
             .address(DEFAULT_ADDRESS)
@@ -46,6 +46,23 @@ public class TestUtils {
             .country("ko-KR")
             .role(Role.USER)
             .build();
+    }
+
+    public static final List<Account> createAccounts(int index) {
+        List<Account> result = new ArrayList<>();
+        for (int i = 0; i < index; i++) {
+            Account account = Account.builder()
+                .email(String.format("email%d@email.com", index))
+                .address(DEFAULT_ADDRESS)
+                .password(DEFAULT_PASSWORD)
+                .username(DEFAULT_NAME)
+                .nickname(DEFAULT_NICKNAME + index)
+                .country("ko-KR")
+                .role(Role.USER)
+                .build();
+            result.add(account);
+        }
+        return result;
     }
 
     public static final AccountCreateDto createAccountCreateDto() {

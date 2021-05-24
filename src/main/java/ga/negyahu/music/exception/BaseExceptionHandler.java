@@ -10,10 +10,12 @@ public class BaseExceptionHandler {
 
     @ExceptionHandler(value = AccountNotFoundException.class)
     public ResponseEntity accountNotFoundException() {
-        ExceptionMessage message = ExceptionMessage.builder()
-            .code(400)
-            .message("존재하지 않는 회원").build();
-        return ResponseEntity.badRequest().body(message);
+        return ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(value = AreaNotFountException.class)
+    public ResponseEntity areaNotFountExceptionException() {
+        return ResponseEntity.notFound().build();
     }
 
 }

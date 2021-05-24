@@ -26,8 +26,8 @@ import lombok.Setter;
 public class Area {
 
     @Id @GeneratedValue
-    @Column(name = "code")
-    private Integer code;
+    @Column(name = "area_id")
+    private Integer id;
 
     @Column(length = 60, unique = true)
     private String name;
@@ -35,4 +35,13 @@ public class Area {
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "area")
     @Builder.Default
     private List<Account> accounts = new ArrayList<>();
+
+    /*연관관계 메소드*/
+    public void addAccounts(Iterable<Account> accounts){
+        for (Account account : accounts) {
+            account.setArea(this);
+            this.accounts.add(account);
+        }
+    }
+
 }

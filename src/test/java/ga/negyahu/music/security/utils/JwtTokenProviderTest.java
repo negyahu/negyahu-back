@@ -27,7 +27,7 @@ public class JwtTokenProviderTest {
     @BeforeEach
     public void init() {
         this.provider = new JwtTokenProvider(secretKey, time);
-        this.account = TestUtils.createAccount();
+        this.account = TestUtils.createDefaultAccount();
         this.account.setId(1L);
         this.accountContext = TestUtils.createAccountContest(account);
     }

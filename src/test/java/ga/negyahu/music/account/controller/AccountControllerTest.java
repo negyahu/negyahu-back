@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.dto.AccountCreateDto;
@@ -22,14 +21,10 @@ import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.exception.AccountNotFoundException;
 import ga.negyahu.music.utils.TestUtils;
-import java.util.Optional;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -76,7 +71,7 @@ public class AccountControllerTest {
     public void 회원가입_이미사용중인_이메일() throws Exception {
 
         // given : 이미 동일한 이메일로 계정이 존재한다.
-        Account account = TestUtils.createAccount();
+        Account account = TestUtils.createDefaultAccount();
         Account save = testUtils.signUpAccount(account);
 
         AccountCreateDto createDto = TestUtils.createAccountCreateDto();
@@ -94,7 +89,7 @@ public class AccountControllerTest {
 
     @Test
     public void 본인_계정_조회() throws Exception {
-        Account account = TestUtils.createAccount();
+        Account account = TestUtils.createDefaultAccount();
         String token = testUtils.signSupAndLogin(account);
         ResultActions step1 = this.mockMvc.perform(get(ROOT_URI + "/{id}", account.getId())
             .contentType(APPLICATION_JSON_VALUE)
@@ -108,7 +103,7 @@ public class AccountControllerTest {
 
     @Test
     public void 다른_회원_조회() throws Exception {
-        Account account = TestUtils.createAccount();
+        Account account = TestUtils.createDefaultAccount();
         Account save = testUtils.signUpAccount(account);
         ResultActions step1 = this.mockMvc.perform(get(ROOT_URI + "/{id}", account.getId())
             .contentType(APPLICATION_JSON_VALUE)
@@ -126,12 +121,12 @@ public class AccountControllerTest {
         );
         step1.andDo(print());
 
-        step1.andExpect(status().isBadRequest());
+        step1.andExpect(status().isNotFound());
     }
 
     @Test
     public void 회원정보수정_성공() throws Exception {
-        Account account = TestUtils.createAccount();
+        Account account = TestUtils.createDefaultAccount();
         String jwt = testUtils.signSupAndLogin(account);
 
         AccountUpdateDto updateDto = AccountUpdateDto.builder()
@@ -165,10 +160,10 @@ public class AccountControllerTest {
     @Test
     public void 다른_유저정보_수정_실패() throws Exception {
         // given : 두개의 게정
-        Account account = TestUtils.createAccount();
+        Account account = TestUtils.createDefaultAccount();
         String jwt = testUtils.signSupAndLogin(account);
 
-        Account account2 = TestUtils.createAccount();
+        Account account2 = TestUtils.createDefaultAccount();
         account2.setEmail("email@email.com");
         account2.setNickname("김유저");
         String jwt2 = testUtils.signSupAndLogin(account2);

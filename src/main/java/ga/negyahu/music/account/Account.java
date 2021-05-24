@@ -46,7 +46,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class Account {
 
     @Id @GeneratedValue
-    @Column(name = "user_id")
+    @Column(name = "account_id")
     private Long id;
 
     @Column(length = 40)

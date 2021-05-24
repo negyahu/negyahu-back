@@ -1,13 +1,11 @@
 package ga.negyahu.music.security;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.security.config.JwtSecurityConfig;
@@ -40,7 +38,7 @@ public class SecurityConfigTest {
 
     @BeforeEach
     public void init(){
-        Account account = TestUtils.createAccount();
+        Account account = TestUtils.createDefaultAccount();
         password = account.getPassword();
         this.account = testUtils.signUpAccount(account);
     }

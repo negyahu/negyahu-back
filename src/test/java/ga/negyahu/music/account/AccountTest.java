@@ -20,7 +20,7 @@ public class AccountTest {
     @Test
     public void 계정_생성_테스트(){
 
-        Account account = TestUtils.createAccount();
+        Account account = TestUtils.createDefaultAccount();
 
         Account save = this.accountRepository.save(account);
 
