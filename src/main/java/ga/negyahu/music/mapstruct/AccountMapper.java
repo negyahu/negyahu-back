@@ -7,6 +7,7 @@ import ga.negyahu.music.account.dto.AccountOwnerDto;
 import ga.negyahu.music.account.dto.AccountUpdateDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
@@ -21,11 +22,13 @@ public interface AccountMapper {
 
     Account from(Account account);
 
-
     AccountDto toDto(Account account);
 
     AccountOwnerDto toOwnerDto(Account account);
 
     Account from(AccountUpdateDto accountUpdateDto);
+
+    @Mapping(source = "fileUpLoads", target = "fileUpLoads", ignore = true)
+    Account map(Account source, @MappingTarget Account account);
 
 }

@@ -1,14 +1,15 @@
 package ga.negyahu.music.account;
 
+import static java.util.Objects.isNull;
+
 import ga.negyahu.music.account.entity.Address;
-import ga.negyahu.music.area.Area;
 import ga.negyahu.music.account.entity.Role;
+import ga.negyahu.music.account.entity.State;
+import ga.negyahu.music.area.Area;
 import ga.negyahu.music.fileupload.account.AccountFileUpLoad;
-import ga.negyahu.music.message.Message;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -19,7 +20,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
@@ -29,7 +29,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -65,7 +64,7 @@ public class Account {
 
     private boolean isMemberShip;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @Embedded
@@ -80,20 +79,21 @@ public class Account {
 
     private boolean areaCertify;
 
+    @Enumerated(EnumType.STRING)
+    private State state;
+
     /* 연관관계 맵핑*/
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "account")
     @Builder.Default
     private List<AccountFileUpLoad> fileUpLoads = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "message_id")
-    @Builder.Default
-    private List<Message> messages = new ArrayList<>();
-
     @PrePersist
     public void init(){
-        if(Objects.isNull(this.role)){
+        if(isNull(this.role)){
             this.role = Role.USER;
+        }
+        if(isNull(this.state)){
+            this.state =State.ACTIVE;
         }
     }
 

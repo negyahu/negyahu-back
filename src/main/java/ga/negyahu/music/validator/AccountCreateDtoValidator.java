@@ -35,11 +35,10 @@ public class AccountCreateDtoValidator implements Validator {
             return;
         }
         if (find.getEmail().equals(inputEmail)) {
-            errors.rejectValue("email", "error.duplicatedEmail");
+            errors.rejectValue("email", "error.duplicatedEmail","[ERROR] 이미 사용중인 이메일주소");
         }
         if(find.getNickname().equals(nickname)){
-            errors.rejectValue("nickname", "error.duplicatedNickname");
+            errors.rejectValue("nickname", "error.duplicatedNickname","[ERROR] 이미 사용중인 닉네임");
         }
-
     }
 }

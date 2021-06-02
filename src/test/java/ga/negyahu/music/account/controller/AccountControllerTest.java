@@ -20,12 +20,16 @@ import ga.negyahu.music.account.entity.Address;
 import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.exception.AccountNotFoundException;
+import ga.negyahu.music.utils.DataJpaTestConfig;
 import ga.negyahu.music.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,7 +84,6 @@ public class AccountControllerTest {
         ResultActions step1 = this.mockMvc.perform(post(ROOT_URI).contentType(APPLICATION_JSON)
             .content(this.objectMapper.writeValueAsString(createDto))
         );
-        step1.andDo(print());
 
         step1.andExpect(jsonPath("$", hasSize(2)))
             .andExpect(jsonPath("$[0].field").exists())
@@ -95,7 +98,6 @@ public class AccountControllerTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, token)
         );
-        step1.andDo(print());
 
         step1.andExpect(jsonPath("password").doesNotExist())
             .andExpect(jsonPath("memberShip").exists());
@@ -108,7 +110,6 @@ public class AccountControllerTest {
         ResultActions step1 = this.mockMvc.perform(get(ROOT_URI + "/{id}", account.getId())
             .contentType(APPLICATION_JSON_VALUE)
         );
-        step1.andDo(print());
 
         step1.andExpect(jsonPath("password").doesNotExist())
             .andExpect(jsonPath("memberShip").doesNotExist());
@@ -119,7 +120,6 @@ public class AccountControllerTest {
         ResultActions step1 = this.mockMvc.perform(get(ROOT_URI + "/{id}", 1L)
             .contentType(APPLICATION_JSON_VALUE)
         );
-        step1.andDo(print());
 
         step1.andExpect(status().isNotFound());
     }

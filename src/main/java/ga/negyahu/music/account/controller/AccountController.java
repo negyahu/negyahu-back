@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -35,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AccountController {
 
-    public static final String ROOT_URI = "/accounts";
+    public static final String ROOT_URI = "/api/accounts";
     public final AccountMapper accountMapper = AccountMapper.INSTANCE;
 
     private final AccountService accountService;
@@ -57,7 +58,8 @@ public class AccountController {
 
         Account save = accountService.signUp(account);
         URI uri = WebMvcLinkBuilder.linkTo(AccountController.class).slash(save.getId()).toUri();
-        return ResponseEntity.created(uri).build();
+        AccountDto accountDto = this.accountMapper.toDto(save);
+        return ResponseEntity.created(uri).body(accountDto);
     }
 
     @GetMapping(value = "/{id}")
@@ -76,16 +78,16 @@ public class AccountController {
     @PatchMapping(value = "/{id}")
     public ResponseEntity patch(@PathVariable Long id, @LoginUser Account loginUser,
         @Valid @RequestBody AccountUpdateDto accountDto,Errors errors) {
-
+        // Check owner
+        if(Objects.isNull(loginUser) || !Objects.equals(loginUser.getId(),id)) {
+            return ResponseEntity.status(403).build();
+        }
         // Form validation
         updateDtoValidator.validate(accountDto,errors);
         if(errors.hasErrors()){
             return ResponseEntity.badRequest().body(errors);
         }
-        // Check owner
-        if(Objects.isNull(loginUser) || !Objects.equals(loginUser.getId(),id)) {
-            return ResponseEntity.status(403).build();
-        }
+
         // Update
         Account account = accountMapper.from(accountDto);
         account.setId(id);
@@ -94,5 +96,9 @@ public class AccountController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/{id}")
+    public String testMethod(@PathVariable Long id){
+        return id.toString();
+    }
 
 }

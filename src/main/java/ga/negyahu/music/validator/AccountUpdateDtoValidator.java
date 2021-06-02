@@ -29,10 +29,9 @@ public class AccountUpdateDtoValidator implements Validator {
 
         AccountUpdateDto dto = (AccountUpdateDto) target;
         String nickname = dto.getNickname();
-        if (!accountRepository.existsByNickname(nickname)) {
+        if (isNull(nickname)|| !accountRepository.existsByNickname(nickname)) {
             return;
         }
         errors.rejectValue("nickname", "error.duplicatedNickname");
-
     }
 }
