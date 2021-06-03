@@ -11,4 +11,6 @@ public interface AccountService {
     Account fetch(Long id);
 
     Account update(Account account);
+
+    void delete(Long id);
 }

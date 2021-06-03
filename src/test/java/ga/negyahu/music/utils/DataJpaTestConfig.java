@@ -1,13 +1,21 @@
 package ga.negyahu.music.utils;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.account.service.AccountService;
 import ga.negyahu.music.account.service.AccountServiceImpl;
+import ga.negyahu.music.event.SignUpEvent;
+import ga.negyahu.music.event.SignUpEventHandler;
 import ga.negyahu.music.security.utils.JwtTokenProvider;
+import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -18,6 +26,14 @@ public class DataJpaTestConfig {
 
     @Autowired
     public AccountRepository accountRepository;
+
+    @Primary
+    @Bean
+    public AccountService accountService() {
+        SignUpEventHandler mock = mock(SignUpEventHandler.class);
+        return new AccountServiceImpl(this.accountRepository, passwordEncoder(),
+            mock);
+    }
 
     @Bean
     public JwtTokenProvider provider() {
@@ -31,19 +47,13 @@ public class DataJpaTestConfig {
 
     @Bean
     public TestUtils testUtils() {
-        TestUtils testUtils = new TestUtils();
+        TestUtils testUtils = new TestUtils(accountService(),provider());
         return testUtils;
     }
 
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
-    }
-
-    @Bean
-    public AccountService accountService() {
-        return new AccountServiceImpl(accountRepository,
-            passwordEncoder(), modelMapper());
     }
 
 }

@@ -8,6 +8,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -40,11 +41,34 @@ public class Message {
     private LocalDateTime sendDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id",nullable = false)
     private Account sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id",nullable = false)
     private Account receiver;
 
     private boolean isOpened;
 
+    private boolean isDeletedBySender;
+
+    private boolean isDeletedByReceiver;
+
+    public boolean isSender(Long accountId){
+     return this.sender.getId() == accountId;
+    }
+
+    public void open(Long accountId) {
+        if(this.isOpened){
+            return;
+        }
+        if(this.receiver.getId().equals(accountId)){
+            isOpened = true;
+            return;
+        }
+    }
+
+    public boolean canModifyBy(Long accountId) {
+        return this.sender.getId() == accountId;
+    }
 }

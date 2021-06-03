@@ -8,6 +8,8 @@ import ga.negyahu.music.utils.DataJpaTestConfig;
 import ga.negyahu.music.utils.TestUtils;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +19,15 @@ import org.springframework.context.annotation.Description;
 import org.springframework.context.annotation.Import;
 
 @DataJpaTest
-//@Import(DataJpaTestConfig.class)
+@Import(DataJpaTestConfig.class)
 public class AccountRepositoryTest {
 
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
     private TestUtils testUtils;
+    @PersistenceContext
+    private EntityManager em;
 
     @Description("Where절 추가, Account의 State가 Delete라면 조회하지 않는다.")
     @Test
@@ -45,9 +49,18 @@ public class AccountRepositoryTest {
     }
 
     @Test
-    public void 계정_삭제(){
+    public void 계정상태_변경(){
+        // given
         Account account = TestUtils.createDefaultAccount();
-        this.re
+        Account save = this.accountRepository.save(account);
+
+        assertEquals(State.ACTIVE, save.getState());
+        // when : 상태를 변경
+        this.accountRepository.modifyState(save.getId(), State.DELETED);
+
+        // then : 상태 활성 -> 삭제로 변경
+        Account find = this.accountRepository.findFirstByEmail(account.getEmail()).get();
+        assertEquals(State.DELETED,find.getState(),"State active -> delete");
     }
 
 }

@@ -50,4 +50,10 @@ public class AccountServiceImpl implements AccountService {
         accountMapper.map(account,fetch);
         return fetch;
     }
+
+    @Override
+    public void delete(Long id) {
+        Account account = this.fetch(id);
+        account.setState(State.DELETED);
+    }
 }

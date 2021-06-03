@@ -6,6 +6,8 @@ import ga.negyahu.music.account.entity.Address;
 import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.account.service.AccountService;
+import ga.negyahu.music.account.service.AccountServiceImpl;
+import ga.negyahu.music.message.Message;
 import ga.negyahu.music.security.AccountContext;
 import ga.negyahu.music.security.utils.JwtTokenProvider;
 import java.util.ArrayList;
@@ -13,6 +15,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,8 +24,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
 @Transactional
+@Component
 public class TestUtils {
 
     public static final String DEFAULT_EMAIL = "yangfriendship.dev@gmail.com";
@@ -31,10 +35,15 @@ public class TestUtils {
     public static final Address DEFAULT_ADDRESS = new Address("02058", "서울시 성북구 북악산로 1111",
         "성신여대입구역 5번출구");
 
-    @Autowired
-    private AccountService accountService;
-    @Autowired
-    private JwtTokenProvider provider;
+    private final AccountService accountService;
+
+    private final JwtTokenProvider provider;
+
+    public TestUtils(AccountService accountService,
+        JwtTokenProvider provider) {
+        this.accountService = accountService;
+        this.provider = provider;
+    }
 
     public static final Account createDefaultAccount() {
         return Account.builder()
@@ -98,4 +107,19 @@ public class TestUtils {
         return provider.createToken(authenticationToken);
     }
 
+    public String loginAccount(Account account) {
+        AccountContext accountContest = createAccountContest(account);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+            accountContest, null, accountContest.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        return provider.createToken(authenticationToken);
+    }
+
+    public static Message createMessage(String message,Account sender,Account receiver){
+        return Message.builder()
+            .content(message)
+            .receiver(receiver)
+            .sender(sender)
+            .build();
+    }
 }

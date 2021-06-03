@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
             .antMatchers("/api/login").permitAll()
-            .antMatchers("/api/accounts").permitAll()
+            .antMatchers("/api/accounts/*").permitAll()
             .anyRequest()
             .permitAll()
         ;
@@ -56,14 +56,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.exceptionHandling()
             .authenticationEntryPoint(authenticationEntryPoint())
             .accessDeniedHandler(accessDeniedHandler());
-        http.csrf().disable();
 
-        http
-            .httpBasic().disable()
-            .cors().configurationSource(corsConfigurationSource());
+        http.csrf()
+            .disable();
+
+        http.httpBasic()
+            .disable()
+            ;
+//            .cors()
+//            .configurationSource(corsConfigurationSource());
 
         http.apply(securityConfigurer());
     }
+
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {

@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExceptionMessage {
+public class ResultMessage {
 
-    private int code;
+    private Result result;
 
     private String message;
 
