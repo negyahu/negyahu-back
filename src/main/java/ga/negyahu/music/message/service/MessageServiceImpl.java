@@ -10,7 +10,9 @@ import ga.negyahu.music.exception.BadMessageRequestException;
 import ga.negyahu.music.exception.MessageAlreadyOpenException;
 import ga.negyahu.music.exception.MessageNotFoundException;
 import ga.negyahu.music.message.Message;
+import ga.negyahu.music.message.dto.MessageDto;
 import ga.negyahu.music.message.dto.MessageOnlyIds;
+import ga.negyahu.music.message.dto.MessageSearch;
 import ga.negyahu.music.message.repository.MessageRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,6 +76,7 @@ public class MessageServiceImpl implements MessageService {
         return this.messageRepository.saveAll(messages);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Message fetch(Long messageId, Long accountId) {
         Message message = this.messageRepository.findWithAccountsById(messageId)
@@ -79,11 +84,13 @@ public class MessageServiceImpl implements MessageService {
                 throw new MessageNotFoundException();
             });
         // 제3자가 메세지를 조회하는지 확인
-        if (message.getReceiver().getId() != accountId
-            && message.getSender().getId() != accountId) {
+        if (!message.isOwner(accountId)) {
             throw new AccessDeniedException("[ERROR] 접근할 수 없습니다.");
         }
-
+        // 요청자가 이미 메세지를 삭제했다면 조회할수 없다.
+        if (!message.canFetchBy(accountId)) {
+            throw new MessageNotFoundException();
+        }
         // 수신자가 메세지를 조회한다면 '열람' 으로 변경
         if (message.getReceiver().getId() == accountId) {
             message.open(accountId);
@@ -92,10 +99,17 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public Page<MessageDto> search(MessageSearch search, Pageable pageable) {
+        return this.messageRepository.search(search, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public List<Message> fetchAllSent(Long accountId) {
         return this.messageRepository.findAllSentMessage(accountId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Message> fetchAllReceived(Long accountId) {
         return this.messageRepository.findAllReceivedMessage(accountId);
@@ -109,20 +123,25 @@ public class MessageServiceImpl implements MessageService {
                 throw new MessageNotFoundException();
             });
         // 삭제요청을 발신자가 했을 경우
-        if (message.getReceiver().getId() == accountId) {
+        if (message.getSender().getId() == accountId) {
 
-            // 수신자가 아직 메세지를 읽지 않았다면 삭제
-            if (!message.isOpened()) {
+            // 수신자가 아직 메세지를 읽지 않았거나, 수신자가 메세지를 삭제했다면 삭제
+            if (!message.isOpened() || message.isDeletedByReceiver()) {
                 this.messageRepository.delete(message);
                 return;
             }
-            // 수신자가 읽었다면 발신자만 삭제
-            message.setDeletedByReceiver(true);
+            // 수신자가 읽었다면 발신자만 flag 변경
+            message.setDeletedBySender(true);
             return;
         }
-        // 삭제요청을 발신자가 했을 경우 수신자만 삭제
-        if (message.getSender().getId() == accountId) {
-            message.setDeletedBySender(true);
+        // 삭제요청을 수신자가 했을 경우 수신자만 삭제
+        if (message.getReceiver().getId() == accountId) {
+            // 발신자도 이미 삭제했다면 메세지를 삭제
+            if (message.isDeletedBySender()) {
+                this.messageRepository.delete(message);
+            }
+            // 발신자는 아직 삭제하지 않았다면 수신자의 flag만 변경
+            message.setDeletedByReceiver(true);
             return;
         }
     }
@@ -140,7 +159,7 @@ public class MessageServiceImpl implements MessageService {
         if (message.isOpened()) {
             throw new MessageAlreadyOpenException("[ERROR] 수신자가 열람한 메세지는 수정할 수 없습니다.");
         }
-        if (!message.canModifyBy(newMessage.getSender().getId())){
+        if (!message.canModifyBy(newMessage.getSender().getId())) {
             throw new AccessDeniedException("[ERROR] 접근할 수 없습니다.");
         }
         modelMapper.map(newMessage, message);

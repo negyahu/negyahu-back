@@ -3,6 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'org.asciidoctor.convert' version '1.5.8'
     id 'java'
+    id 'com.ewerk.gradle.plugins.querydsl' version "1.0.10"
 }
 
 group = 'ga.negyahu'
@@ -11,6 +12,9 @@ sourceCompatibility = '11'
 ext {
     mapstructVersion = "1.3.0.Final"
     lombokVersion = "1.18.6"
+    set('queryDSL', '4.3.1')
+    set('snippetsDir', file("build/generated-snippets"))
+
 }
 configurations {
     compileOnly {
@@ -20,10 +24,6 @@ configurations {
 
 repositories {
     mavenCentral()
-}
-
-ext {
-    set('snippetsDir', file("build/generated-snippets"))
 }
 
 dependencies {
@@ -53,6 +53,8 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.1'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.1'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.1'
+
+    implementation 'com.querydsl:querydsl-jpa'
 }
 
 test {
@@ -64,3 +66,24 @@ asciidoctor {
     inputs.dir snippetsDir
     dependsOn test
 }
+
+//querydsl 추가 시작
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+    main.java.srcDir querydslDir
+}
+
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
+//querydsl 추가 끝

@@ -4,13 +4,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.repository.AccountRepository;
+import ga.negyahu.music.utils.DataJpaTestConfig;
 import ga.negyahu.music.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Description;
+import org.springframework.context.annotation.Import;
 
 @DataJpaTest
+@Import(DataJpaTestConfig.class)
 public class AccountTest {
 
     @Autowired

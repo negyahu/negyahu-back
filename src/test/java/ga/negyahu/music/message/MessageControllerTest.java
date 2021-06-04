@@ -1,9 +1,12 @@
 package ga.negyahu.music.message;
 
 import static ga.negyahu.music.message.MessageController.ROOT_URL;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -14,20 +17,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ga.negyahu.music.account.Account;
+import ga.negyahu.music.exception.MessageNotFoundException;
+import ga.negyahu.music.message.dto.MessageSearch;
 import ga.negyahu.music.message.dto.MessageSendDto;
+import ga.negyahu.music.message.dto.MessageType;
 import ga.negyahu.music.message.dto.MessageUpdateDto;
 import ga.negyahu.music.message.repository.MessageRepository;
+import ga.negyahu.music.message.service.MessageService;
+import ga.negyahu.music.utils.MessageTestUtils;
 import ga.negyahu.music.utils.TestUtils;
 import java.util.ArrayList;
 import java.util.List;
+import jdk.jfr.Description;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -43,6 +55,8 @@ public class MessageControllerTest {
     private ObjectMapper objectMapper;
     @Autowired
     private MessageRepository messageRepository;
+    @Autowired
+    private MessageService messageService;
 
     private List<Account> accounts;
     private String tokenOfZeroIndex;
@@ -234,7 +248,7 @@ public class MessageControllerTest {
         ;
 
         Message updated = this.messageRepository.findById(sendMessage.getId()).get();
-        assertNotEquals(dto.getContent(), updated.getContent(),"변경값이 적용되지 않는다.");
+        assertNotEquals(dto.getContent(), updated.getContent(), "변경값이 적용되지 않는다.");
     }
 
     @Test
@@ -269,12 +283,249 @@ public class MessageControllerTest {
 
         // then : 403
         patch2.andExpect(status().isForbidden())
-        .andDo(print())
+            .andDo(print())
         ;
 
-
         Message updated = this.messageRepository.findById(sendMessage.getId()).get();
-        assertNotEquals(dto.getContent(), updated.getContent(),"변경값이 적용되지 않는다.");
+        assertNotEquals(dto.getContent(), updated.getContent(), "변경값이 적용되지 않는다.");
+    }
+
+    @Description("수신자가 아직 읽지 않은 메세지를 발신자가 삭제")
+    @Test
+    public void 발신자_메세지_삭제() throws Exception {
+        Account sender = this.accounts.get(0);
+        Account receiver = this.accounts.get(1);
+        Message sendMessage = sendMessage(sender, receiver, "message");
+        this.messageRepository.save(sendMessage);
+
+        MessageUpdateDto dto = MessageUpdateDto.builder().content("new message").build();
+
+        ResultActions delete = this.mockMvc
+            .perform(MockMvcRequestBuilders.delete(ROOT_URL + "/{id}", sendMessage.getId())
+                .header(AUTHORIZATION, this.tokenOfZeroIndex)
+                .content(this.objectMapper.writeValueAsString(dto))
+                .contentType(MediaType.APPLICATION_JSON)
+            );
+
+        // then : 206, 수신자가 아직 읽지 않았기 때문에 메세지는 완전히 삭제된다.
+        delete.andExpect(status().isNoContent());
+        assertThrows(MessageNotFoundException.class, () -> {
+            Message fetch = this.messageService.fetch(sendMessage.getId(), sender.getId());
+        });
+
+        long totalCount = this.messageRepository.count();
+        assertEquals(0, totalCount);
+    }
+
+    @Description("수신자가 이미 읽은 메세지를 발신자가 삭제, 발신자의 flag만 변경된다.")
+    @Test
+    public void 이미읽은_메세지_발신자_삭제() throws Exception {
+        Account sender = this.accounts.get(0);
+        Account receiver = this.accounts.get(1);
+        Message sendMessage = sendMessage(sender, receiver, "message");
+        sendMessage.setOpened(true);    // 메세지 읽음으로 설정
+        this.messageRepository.save(sendMessage);
+
+        MessageUpdateDto dto = MessageUpdateDto.builder().content("new message").build();
+
+        ResultActions delete = this.mockMvc
+            .perform(MockMvcRequestBuilders.delete(ROOT_URL + "/{id}", sendMessage.getId())
+                .header(AUTHORIZATION, this.tokenOfZeroIndex)
+                .content(this.objectMapper.writeValueAsString(dto))
+                .contentType(MediaType.APPLICATION_JSON)
+            );
+
+        // then : 206
+        delete.andExpect(status().isNoContent());
+
+        // then : 발신자는 조회할 수 없다.
+        assertThrows(MessageNotFoundException.class, () -> {
+            Message fetch = this.messageService.fetch(sendMessage.getId(), sender.getId());
+        });
+        long totalCount = this.messageRepository.count();
+        assertEquals(1, totalCount);
+        // then : 수신자는 여전히 조회할 수 있다.
+        Message fetchByReceiver = this.messageService.fetch(sendMessage.getId(), receiver.getId());
+        assertTrue(fetchByReceiver.isDeletedBySender());
+    }
+
+    @Description("발신자는 삭제하지 않고, 수신자만 삭제요청")
+    @Test
+    public void 발신자삭제X_수신자삭제요청() throws Exception {
+        Account sender = this.accounts.get(1);
+        Account receiver = this.accounts.get(0);
+        Message sendMessage = sendMessage(sender, receiver, "message");
+        this.messageRepository.save(sendMessage);
+
+        MessageUpdateDto dto = MessageUpdateDto.builder().content("new message").build();
+
+        ResultActions delete = this.mockMvc
+            .perform(MockMvcRequestBuilders.delete(ROOT_URL + "/{id}", sendMessage.getId())
+                .header(AUTHORIZATION, this.tokenOfZeroIndex)
+                .content(this.objectMapper.writeValueAsString(dto))
+                .contentType(MediaType.APPLICATION_JSON)
+            );
+
+        // then : 206, 발신
+        delete.andExpect(status().isNoContent());
+        assertThrows(MessageNotFoundException.class, () -> {
+            Message fetch = this.messageService.fetch(sendMessage.getId(), receiver.getId());
+        });
+
+        long totalCount = this.messageRepository.count();
+        assertEquals(1, totalCount);
+        Message fetchBySender = this.messageService.fetch(sendMessage.getId(), sender.getId());
+        assertTrue(fetchBySender.isDeletedByReceiver());
+    }
+
+    @Description("수신자 메세지 삭제후, 발신자도 삭제요청 -> 완전히 삭제된다.")
+    @Test
+    public void 수신자삭제후_발신자삭제요청() throws Exception {
+        Account sender = this.accounts.get(0);
+        Account receiver = this.accounts.get(1);
+        Message sendMessage = sendMessage(sender, receiver, "message");
+        // given : 수신자 읽음, 수신자 삭제
+        sendMessage.setDeletedByReceiver(true);
+        sendMessage.setOpened(true);
+        this.messageRepository.save(sendMessage);
+
+        MessageUpdateDto dto = MessageUpdateDto.builder().content("new message").build();
+
+        // when : 발신자 삭제요청
+        ResultActions delete = this.mockMvc
+            .perform(MockMvcRequestBuilders.delete(ROOT_URL + "/{id}", sendMessage.getId())
+                .header(AUTHORIZATION, this.tokenOfZeroIndex)
+                .content(this.objectMapper.writeValueAsString(dto))
+                .contentType(MediaType.APPLICATION_JSON)
+            );
+
+        // then : 206, 메세지 완전히 삭제, 수신자 발신자 모두 조회불가
+        delete.andExpect(status().isNoContent());
+        assertThrows(MessageNotFoundException.class, () -> {
+            Message fetch = this.messageService.fetch(sendMessage.getId(), receiver.getId());
+            Message fetch2 = this.messageService.fetch(sendMessage.getId(), sender.getId());
+        });
+        // then : DB에서 해당 메세지 삭제
+        long totalCount = this.messageRepository.count();
+        assertEquals(0, totalCount);
+
+    }
+
+    @Description("발신자 삭제후, 수신자 메세지 삭제요청 -> 완전히 삭제된다.")
+    @Test
+    public void 발신자삭제후_수신자삭제요청() throws Exception {
+        Account sender = this.accounts.get(1);
+        Account receiver = this.accounts.get(0);
+        Message sendMessage = sendMessage(sender, receiver, "message");
+        // given : 수신자 읽음, 수신자 삭제
+        sendMessage.setDeletedBySender(true);
+//        sendMessage.setOpened(true);
+        this.messageRepository.save(sendMessage);
+
+        MessageUpdateDto dto = MessageUpdateDto.builder().content("new message").build();
+
+        // when : 발신자 삭제요청
+        ResultActions delete = this.mockMvc
+            .perform(MockMvcRequestBuilders.delete(ROOT_URL + "/{id}", sendMessage.getId())
+                .header(AUTHORIZATION, this.tokenOfZeroIndex)
+                .content(this.objectMapper.writeValueAsString(dto))
+                .contentType(MediaType.APPLICATION_JSON)
+            );
+
+        // then : 206, 메세지 완전히 삭제, 수신자 발신자 모두 조회불가
+        delete.andExpect(status().isNoContent());
+        assertThrows(MessageNotFoundException.class, () -> {
+            Message fetch = this.messageService.fetch(sendMessage.getId(), receiver.getId());
+            Message fetch2 = this.messageService.fetch(sendMessage.getId(), sender.getId());
+        });
+        // then : DB에서 해당 메세지 삭제
+        long totalCount = this.messageRepository.count();
+        assertEquals(0, totalCount);
+    }
+
+    @Test
+    public void 발신한_메세지_검색() throws Exception {
+        Account sender = this.accounts.get(0);
+        Account receiver = this.accounts.get(1);
+        MessageTestUtils utils = new MessageTestUtils(this.messageRepository);
+        utils.init(sender, receiver);
+
+        MessageSearch search = MessageSearch.builder()
+            .type(MessageType.SEND)
+            .build();
+
+        ResultActions request = this.mockMvc.perform(get(ROOT_URL)
+            .header(AUTHORIZATION, this.tokenOfZeroIndex)
+            .contentType(MediaType.APPLICATION_JSON)
+            .param("type", MessageType.SEND.name())
+        ).andDo(print());
+
+        request.andExpect(status().isOk())
+            .andExpect(jsonPath("$.content", hasSize(10)))
+            .andExpect(jsonPath("$.totalElements", is(10)))
+        ;
+    }
+
+    @Test
+    public void 수신한_메세지_검색() throws Exception {
+        Account sender = this.accounts.get(0);
+        Account receiver = this.accounts.get(1);
+        MessageTestUtils utils = new MessageTestUtils(this.messageRepository);
+        utils.init(sender, receiver);
+
+        ResultActions request = this.mockMvc.perform(get(ROOT_URL)
+            .header(AUTHORIZATION, this.tokenOfZeroIndex)
+            .contentType(MediaType.APPLICATION_JSON)
+            .param("type", MessageType.RECEIVE.name())
+        ).andDo(print());
+
+        request.andExpect(status().isOk())
+            .andExpect(jsonPath("$.content", hasSize(5)))
+            .andExpect(jsonPath("$.totalElements", is(5)))
+        ;
+    }
+
+    @Test
+    public void 모든_송수신메세지() throws Exception {
+        Account sender = this.accounts.get(0);
+        Account receiver = this.accounts.get(1);
+        MessageTestUtils utils = new MessageTestUtils(this.messageRepository);
+        utils.init(sender, receiver);
+
+        ResultActions request = this.mockMvc.perform(get(ROOT_URL)
+            .header(AUTHORIZATION, this.tokenOfZeroIndex)
+            .contentType(MediaType.APPLICATION_JSON)
+            .param("type", MessageType.RECEIVE.name())
+        ).andDo(print());
+
+        request.andExpect(status().isOk())
+            .andExpect(jsonPath("$.content", hasSize(5)))
+            .andExpect(jsonPath("$.totalElements", is(5)))
+        ;
+    }
+
+    @Test
+    public void 모든_송수신메세지_페이징() throws Exception {
+        Account sender = this.accounts.get(0);
+        Account receiver = this.accounts.get(1);
+        MessageTestUtils utils = new MessageTestUtils(this.messageRepository);
+        utils.init(sender, receiver);
+
+        Integer page = 1;
+        Integer size = 5;
+
+        ResultActions request = this.mockMvc.perform(get(ROOT_URL)
+            .header(AUTHORIZATION, this.tokenOfZeroIndex)
+            .contentType(MediaType.APPLICATION_JSON)
+            .param("type", MessageType.RECEIVE.name())
+            .param("p", page.toString())
+            .param("s", size.toString())
+        ).andDo(print());
+
+        request.andExpect(status().isOk())
+            .andExpect(jsonPath("$.content", hasSize(size)))
+            .andExpect(jsonPath("$.totalElements", is(5)))
+        ;
     }
 
     private Message sendMessage(Account sender, Account receiver, String message) {

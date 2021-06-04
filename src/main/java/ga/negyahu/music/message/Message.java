@@ -1,6 +1,7 @@
 package ga.negyahu.music.message;
 
 import ga.negyahu.music.account.Account;
+import java.lang.reflect.Proxy;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +31,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class Message {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "message_id")
     private Long id;
 
@@ -41,11 +43,11 @@ public class Message {
     private LocalDateTime sendDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id",nullable = false)
+    @JoinColumn(name = "sender_id", nullable = false)
     private Account sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receiver_id",nullable = false)
+    @JoinColumn(name = "receiver_id", nullable = false)
     private Account receiver;
 
     private boolean isOpened;
@@ -54,15 +56,15 @@ public class Message {
 
     private boolean isDeletedByReceiver;
 
-    public boolean isSender(Long accountId){
-     return this.sender.getId() == accountId;
+    public boolean isSender(Long accountId) {
+        return this.sender.getId() == accountId;
     }
 
     public void open(Long accountId) {
-        if(this.isOpened){
+        if (this.isOpened) {
             return;
         }
-        if(this.receiver.getId().equals(accountId)){
+        if (this.receiver.getId().equals(accountId)) {
             isOpened = true;
             return;
         }
@@ -71,4 +73,20 @@ public class Message {
     public boolean canModifyBy(Long accountId) {
         return this.sender.getId() == accountId;
     }
+
+    public boolean canFetchBy(Long accountId) {
+        if (this.isDeletedBySender && this.sender.getId() == accountId) {
+            return false;
+        }
+        if (this.isDeletedByReceiver && this.receiver.getId() == accountId) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isOwner(Long accountId) {
+        return this.sender.getId() == accountId
+            || this.receiver.getId() == accountId;
+    }
+
 }

@@ -61,11 +61,11 @@ public class TestUtils {
         List<Account> result = new ArrayList<>();
         for (int i = 0; i < index; i++) {
             Account account = Account.builder()
-                .email(String.format("email%d@email.com", index))
+                .email(String.format("email%d@email.com", i))
                 .address(DEFAULT_ADDRESS)
                 .password(DEFAULT_PASSWORD)
                 .username(DEFAULT_NAME)
-                .nickname(DEFAULT_NICKNAME + index)
+                .nickname(DEFAULT_NICKNAME + (i+1))
                 .country("ko-KR")
                 .role(Role.USER)
                 .build();

@@ -4,12 +4,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.account.service.AccountService;
 import ga.negyahu.music.account.service.AccountServiceImpl;
 import ga.negyahu.music.event.SignUpEvent;
 import ga.negyahu.music.event.SignUpEventHandler;
 import ga.negyahu.music.security.utils.JwtTokenProvider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,8 @@ public class DataJpaTestConfig {
 
     @Autowired
     public AccountRepository accountRepository;
+    @PersistenceContext
+    public EntityManager entityManager;
 
     @Primary
     @Bean
@@ -54,6 +59,11 @@ public class DataJpaTestConfig {
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
+    }
+
+    @Bean
+    public JPAQueryFactory jpaQueryFactory(){
+        return new JPAQueryFactory(entityManager);
     }
 
 }
