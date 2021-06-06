@@ -2,7 +2,8 @@ package ga.negyahu.music.account.entity;
 
 public enum Role {
 
-    USER("USER"), STORE("STORE"), MANAGER("MANAGER"), ADMIN("ADMIN");
+    USER("USER"), AGENCY("AGENCY"), ARTIST("ARTIST"), STORE("STORE"), MANAGER("MANAGER"), ADMIN(
+        "ADMIN");
 
     private static final String ROLE_PREFIX = "ROLE_";
 

@@ -28,7 +28,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Modifying(clearAutomatically = true)
     @Query("update Account as a set a.state = :state where a.id = :id")
-    void modifyState(@Param("id") Long id,@Param("state") State newState);
+    void modifyState(@Param("id") Long id, @Param("state") State newState);
 
     boolean existsByNickname(String nickname);
 

@@ -7,8 +7,10 @@ import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.area.Area;
 import ga.negyahu.music.fileupload.account.AccountFileUpLoad;
+import ga.negyahu.music.subscribe.Subscribe;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,13 +40,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode( of = "id")
+@EqualsAndHashCode(of = "id")
 @Builder
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
 public class Account {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "account_id")
     private Long id;
 
@@ -82,18 +85,30 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private State state;
 
+    private String certifyCode;
+
     /* 연관관계 맵핑*/
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "account")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "account")
     @Builder.Default
     private List<AccountFileUpLoad> fileUpLoads = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Subscribe> subscribes = new ArrayList<>();
+
+    private void addSubscribes(Iterable<Subscribe> subscribes) {
+        for (Subscribe subscribe : subscribes) {
+            this.subscribes.add(subscribe);
+            subscribe.setAccount(this);
+        }
+    }
+
     @PrePersist
-    public void init(){
-        if(isNull(this.role)){
+    public void init() {
+        if (isNull(this.role)) {
             this.role = Role.USER;
         }
-        if(isNull(this.state)){
-            this.state =State.ACTIVE;
+        if (isNull(this.state)) {
+            this.state = State.ACTIVE;
         }
     }
 

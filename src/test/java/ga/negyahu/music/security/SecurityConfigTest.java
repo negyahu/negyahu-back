@@ -61,6 +61,8 @@ public class SecurityConfigTest {
         // then : 로그인 성공, token 을 반환한다.
         step1.andExpect(jsonPath("token").exists())
             .andExpect(header().exists(HttpHeaders.AUTHORIZATION));
+
+        step1.andDo(print());
     }
 
     @Test

@@ -144,6 +144,7 @@ public class MessageServiceImpl implements MessageService {
             message.setDeletedByReceiver(true);
             return;
         }
+        throw new AccessDeniedException("[ERROR] 권한이 없습니다.");
     }
 
     @Override
