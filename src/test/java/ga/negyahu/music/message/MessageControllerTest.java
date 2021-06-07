@@ -42,6 +42,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -73,16 +74,19 @@ public class MessageControllerTest {
         int accountCnt = 3;
         this.accounts = new ArrayList<>(accountCnt);
         this.accounts = TestUtils.createAccounts(accountCnt);
-        this.tokenOfZeroIndex = this.testUtils.signSupAndLogin(accounts.get(0));
         for (int i = 1; i < accountCnt; i++) {
             testUtils.signUpAccount(accounts.get(i));
         }
+        this.tokenOfZeroIndex = this.testUtils.signSupAndLogin(accounts.get(0));
     }
 
     @AfterEach
     public void destroy(){
         this.messageRepository.deleteAll();
         this.accountRepository.deleteAll();
+        SecurityContextHolder.getContext().setAuthentication(null);
+        this.tokenOfZeroIndex = null;
+        this.accounts = null;
     }
 
     @Test
@@ -141,7 +145,6 @@ public class MessageControllerTest {
     }
 
     // Fetch
-    @Disabled
     @Test
     public void 발신자_메세지_조회() throws Exception {
         Account sender = this.accounts.get(0);
@@ -167,15 +170,22 @@ public class MessageControllerTest {
 
     @Test
     public void 수신자_메세지_조회() throws Exception {
+        long count = this.accountRepository.count();
+        System.out.println("count = " + count);
+        long messageCnt = this.messageRepository.count();
+        System.out.println("messageCnt = " + messageCnt);
         Account receiver = this.accounts.get(0);
         Account sender = this.accounts.get(1);
         Message sendMessage = sendMessage(sender, receiver, "message");
+
         String token = this.testUtils.loginAccount(receiver);
+
         ResultActions get = this.mockMvc
             .perform(get(ROOT_URL + "/{id}", sendMessage.getId())
                 .header(AUTHORIZATION, token)
             );
-
+        long count2 = this.accountRepository.count();
+        System.out.println("count = " + count2);
         get.andExpect(jsonPath("$.id", is(sendMessage.getId().intValue())))
             .andExpect(jsonPath("$.content", is(sendMessage.getContent())))
             .andExpect(jsonPath("$.sendDateTime").exists())
@@ -218,7 +228,6 @@ public class MessageControllerTest {
     }
 
     // Patch
-    @Disabled
     @Test
     public void 발신자_메세지_수정() throws Exception {
         Account sender = this.accounts.get(0);
@@ -303,7 +312,6 @@ public class MessageControllerTest {
         assertNotEquals(dto.getContent(), updated.getContent(), "변경값이 적용되지 않는다.");
     }
 
-    @Disabled
     @Description("수신자가 아직 읽지 않은 메세지를 발신자가 삭제")
     @Test
     public void 발신자_메세지_삭제() throws Exception {
@@ -550,7 +558,7 @@ public class MessageControllerTest {
 
         List<Message> messages = utils.init(sender, receiver);
         Long messageId = messages.stream()
-            .filter(m -> m.getSender().getId() == sender.getId())
+            .filter(m -> m.getSender().getId().equals(sender.getId()))
             .findFirst().get().getId();
 
         ResultActions delete = this.mockMvc.perform(delete(ROOT_URL + "/{id}", messageId)
@@ -565,7 +573,6 @@ public class MessageControllerTest {
         }, "수신자가 아직 연람하지 않았기 때문에 완전히 삭제된다.");
     }
 
-    @Disabled
     @Test
     public void 수신자_메세지삭제() throws Exception {
         Account sender = this.accounts.get(1);
@@ -574,7 +581,7 @@ public class MessageControllerTest {
         String token = this.testUtils.loginAccount(receiver);
         List<Message> messages = utils.init(sender, receiver);
         Long messageId = messages.stream()
-            .filter(m -> m.getSender().getId() == sender.getId())
+            .filter(m -> m.getSender().getId().equals(sender.getId()))
             .findFirst().get().getId();
 
         ResultActions delete = this.mockMvc.perform(delete(ROOT_URL + "/{id}", messageId)
@@ -605,7 +612,7 @@ public class MessageControllerTest {
 
         List<Message> messages = utils.init(sender, receiver);
         Long messageId = messages.stream()
-            .filter(m -> m.getSender().getId() == sender.getId())
+            .filter(m -> m.getSender().getId().equals(sender.getId()))
             .findFirst().get().getId();
 
         ResultActions delete = this.mockMvc.perform(delete(ROOT_URL + "/{id}", messageId)

@@ -29,7 +29,7 @@ public class JwtTokenProviderTest {
         this.provider = new JwtTokenProvider(secretKey, time);
         this.account = TestUtils.createDefaultAccount();
         this.account.setId(1L);
-        this.accountContext = TestUtils.createAccountContest(account);
+        this.accountContext = TestUtils.createAccountContext(account);
     }
 
     @Test

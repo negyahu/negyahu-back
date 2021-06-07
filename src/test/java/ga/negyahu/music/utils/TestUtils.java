@@ -4,19 +4,12 @@ import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.dto.AccountCreateDto;
 import ga.negyahu.music.account.entity.Address;
 import ga.negyahu.music.account.entity.Role;
-import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.account.service.AccountService;
-import ga.negyahu.music.account.service.AccountServiceImpl;
 import ga.negyahu.music.message.Message;
 import ga.negyahu.music.security.AccountContext;
 import ga.negyahu.music.security.utils.JwtTokenProvider;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -83,7 +76,7 @@ public class TestUtils {
             .build();
     }
 
-    public static AccountContext createAccountContest(Account account) {
+    public static AccountContext createAccountContext(Account account) {
         Role role = account.getRole();
         List<GrantedAuthority> roles = new ArrayList<>();
         roles.add(new SimpleGrantedAuthority(role.toString()));
@@ -97,7 +90,7 @@ public class TestUtils {
 
     public String signSupAndLogin(Account account) {
         Account save = signUpAccount(account);
-        AccountContext accountContest = createAccountContest(save);
+        AccountContext accountContest = createAccountContext(save);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
             accountContest, null, accountContest.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -105,9 +98,9 @@ public class TestUtils {
     }
 
     public String loginAccount(Account account) {
-        AccountContext accountContest = createAccountContest(account);
+        AccountContext accountContext = createAccountContext(account);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            accountContest, null, accountContest.getAuthorities());
+            accountContext, null, accountContext.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         return provider.createToken(authenticationToken);
     }

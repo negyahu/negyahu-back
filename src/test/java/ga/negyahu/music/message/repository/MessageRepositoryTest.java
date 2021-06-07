@@ -98,7 +98,7 @@ public class MessageRepositoryTest {
         Account sender = this.accounts.get(0);
         Account receiver = this.accounts.get(1);
         this.messages.stream()
-            .filter(m -> m.getSender().getId() == sender.getId())
+            .filter(m -> m.getSender().getId().equals(sender.getId()))
             .forEach(m -> m.setDeletedBySender(true));
 
         List<Message> sentMessages = this.messageRepository.findAllSentMessage(sender.getId());

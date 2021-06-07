@@ -1,7 +1,5 @@
 package ga.negyahu.music.message.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.message.Message;
 import ga.negyahu.music.utils.TestUtils;
@@ -10,7 +8,9 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class MessageServiceImplTest {
 
     private List<Account> accounts;

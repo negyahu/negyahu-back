@@ -84,6 +84,7 @@ public class MessageServiceImpl implements MessageService {
                 throw new MessageNotFoundException();
             });
         // 제3자가 메세지를 조회하는지 확인
+        boolean isOwner = !message.isOwner(accountId);
         if (!message.isOwner(accountId)) {
             throw new AccessDeniedException("[ERROR] 접근할 수 없습니다.");
         }
@@ -92,7 +93,7 @@ public class MessageServiceImpl implements MessageService {
             throw new MessageNotFoundException();
         }
         // 수신자가 메세지를 조회한다면 '열람' 으로 변경
-        if (message.getReceiver().getId() == accountId) {
+        if (message.getReceiver().getId().equals(accountId)) {
             message.open(accountId);
         }
         return message;
@@ -123,7 +124,7 @@ public class MessageServiceImpl implements MessageService {
                 throw new MessageNotFoundException();
             });
         // 삭제요청을 발신자가 했을 경우
-        if (message.getSender().getId() == accountId) {
+        if (message.getSender().getId().equals(accountId)) {
 
             // 수신자가 아직 메세지를 읽지 않았거나, 수신자가 메세지를 삭제했다면 삭제
             if (!message.isOpened() || message.isDeletedByReceiver()) {
@@ -135,7 +136,7 @@ public class MessageServiceImpl implements MessageService {
             return;
         }
         // 삭제요청을 수신자가 했을 경우 수신자만 삭제
-        if (message.getReceiver().getId() == accountId) {
+        if (message.getReceiver().getId().equals(accountId)) {
             // 발신자도 이미 삭제했다면 메세지를 삭제
             if (message.isDeletedBySender()) {
                 this.messageRepository.delete(message);
@@ -183,7 +184,7 @@ public class MessageServiceImpl implements MessageService {
 
     /* 수신자와 발신자가 동일한지 체크*/
     private boolean isSameAccount(Message message) {
-        return message.getSender().getId() == message.getReceiver().getId();
+        return message.getSender().getId().equals(message.getReceiver().getId());
     }
 
 }

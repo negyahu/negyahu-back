@@ -5,8 +5,9 @@ import ga.negyahu.music.message.Message;
 import ga.negyahu.music.message.repository.MessageRepository;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
-
+@Transactional
 public class MessageTestUtils {
 
     private final MessageRepository messageRepository;

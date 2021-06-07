@@ -57,7 +57,7 @@ public class Message {
     private boolean isDeletedByReceiver;
 
     public boolean isSender(Long accountId) {
-        return this.sender.getId() == accountId;
+        return this.sender.getId().equals(accountId);
     }
 
     public void open(Long accountId) {
@@ -71,22 +71,21 @@ public class Message {
     }
 
     public boolean canModifyBy(Long accountId) {
-        return this.sender.getId() == accountId;
+        return this.sender.getId().equals(accountId);
     }
 
     public boolean canFetchBy(Long accountId) {
-        if (this.isDeletedBySender && this.sender.getId() == accountId) {
+        if (this.isDeletedBySender && this.sender.getId().equals(accountId)) {
             return false;
         }
-        if (this.isDeletedByReceiver && this.receiver.getId() == accountId) {
+        if (this.isDeletedByReceiver && this.receiver.getId().equals(accountId)) {
             return false;
         }
         return true;
     }
 
     public boolean isOwner(Long accountId) {
-        return this.sender.getId() == accountId
-            || this.receiver.getId() == accountId;
+        return this.sender.getId().equals(accountId) || this.receiver.getId().equals(accountId);
     }
 
 }

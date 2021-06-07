@@ -21,12 +21,14 @@ import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.exception.AccountNotFoundException;
 import ga.negyahu.music.utils.DataJpaTestConfig;
 import ga.negyahu.music.utils.TestUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -48,6 +50,12 @@ public class AccountControllerTest {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private TestUtils testUtils;
+
+    @AfterEach
+    public void destroy(){
+        this.accountRepository.deleteAll();
+        SecurityContextHolder.getContext().setAuthentication(null);
+    }
 
     @Test
     public void 회원가입_성공() throws Exception {
@@ -100,7 +108,8 @@ public class AccountControllerTest {
 
         step1.andExpect(jsonPath("password").doesNotExist())
             .andExpect(jsonPath("memberShip").exists())
-            .andExpect(jsonPath("mobile").exists());
+            .andExpect(jsonPath("mobile").exists())
+        ;
     }
 
     @Test
@@ -112,7 +121,9 @@ public class AccountControllerTest {
         );
 
         step1.andExpect(jsonPath("password").doesNotExist())
-            .andExpect(jsonPath("memberShip").doesNotExist());
+            .andExpect(jsonPath("memberShip").doesNotExist())
+            .andExpect(jsonPath("mobile").doesNotExist())
+        ;
     }
 
     @Test
@@ -129,12 +140,7 @@ public class AccountControllerTest {
         Account account = TestUtils.createDefaultAccount();
         String jwt = testUtils.signSupAndLogin(account);
 
-        AccountUpdateDto updateDto = AccountUpdateDto.builder()
-            .nickname("정우양")
-            .username("우정양")
-            .password("dnwjd123@@@@")
-            .mobile("01033334444")
-            .build();
+        AccountUpdateDto updateDto = crateUpdateDto();
 
         ResultActions step1 = this.mockMvc.perform(patch(ROOT_URI + "/{id}", account.getId())
             .contentType(APPLICATION_JSON_VALUE)
@@ -151,6 +157,7 @@ public class AccountControllerTest {
 
         assertEquals(updateDto.getNickname(), find.getNickname());
         assertEquals(updateDto.getUsername(), find.getUsername());
+        assertEquals(updateDto.getMobile(), find.getMobile());
     }
 
     @Test
@@ -164,12 +171,7 @@ public class AccountControllerTest {
         account2.setNickname("김유저");
         String jwt2 = testUtils.signSupAndLogin(account2);
 
-        AccountUpdateDto updateDto = AccountUpdateDto.builder()
-            .nickname("정우양")
-            .username("우정양")
-            .password("dnwjd123@@@@")
-            .mobile("01033334444")
-            .build();
+        AccountUpdateDto updateDto = crateUpdateDto();
 
         // when : 1번 계정의 정보를 2번 계정이 수정
         ResultActions step1 = this.mockMvc.perform(patch(ROOT_URI + "/{id}", account.getId())
@@ -180,6 +182,15 @@ public class AccountControllerTest {
 
         // then : Forbidden 403
         step1.andExpect(status().isForbidden());
+    }
+
+    private AccountUpdateDto crateUpdateDto(){
+        return AccountUpdateDto.builder()
+            .nickname("정우양")
+            .username("우정양")
+            .password("dnwjd123@@@@")
+            .mobile("01033334444")
+            .build();
     }
 
 }
