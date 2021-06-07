@@ -27,8 +27,6 @@ public class AccountDto {
 
     private String country;
 
-    private Address address;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDate signUpDate;
 

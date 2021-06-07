@@ -22,10 +22,8 @@ public class AccountUpdateDto {
 
     private String username;
 
+    private String mobile;
+
     private String nickname;
-
-    private String country;
-
-    private Address address;
 
 }

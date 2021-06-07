@@ -1,6 +1,7 @@
 package ga.negyahu.music.account.dto;
 
 import ga.negyahu.music.account.entity.Address;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,11 +24,7 @@ public class AccountCreateDto {
 
     private String nickname;
 
-    private String country;
+    @Size(min = 9)
+    private String mobile;
 
-    private String zipcode;
-
-    private String roadAddress;
-
-    private String detailAddress;
 }

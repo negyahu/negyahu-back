@@ -58,12 +58,13 @@ public class Account {
     private String password;
 
     @Column(length = 30)
+    private String mobile;
+
+    @Column(length = 30)
     private String username;
 
     @Column(length = 30)
     private String nickname;
-
-    private String country;
 
     private boolean isMemberShip;
 

@@ -1,12 +1,15 @@
 package ga.negyahu.music.agency;
 
 import ga.negyahu.music.account.Account;
+import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.artist.Artist;
 import ga.negyahu.music.artist.ArtistMember;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -40,6 +43,9 @@ public class Agency {
     private String businessNumber;
 
     private String url;
+
+    @Enumerated(EnumType.STRING)
+    private State state;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CEO")

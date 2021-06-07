@@ -8,7 +8,6 @@ import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -100,7 +99,8 @@ public class AccountControllerTest {
         );
 
         step1.andExpect(jsonPath("password").doesNotExist())
-            .andExpect(jsonPath("memberShip").exists());
+            .andExpect(jsonPath("memberShip").exists())
+            .andExpect(jsonPath("mobile").exists());
     }
 
     @Test
@@ -130,12 +130,10 @@ public class AccountControllerTest {
         String jwt = testUtils.signSupAndLogin(account);
 
         AccountUpdateDto updateDto = AccountUpdateDto.builder()
-            .country("newcountry")
             .nickname("정우양")
-            .address(new Address("101010", "서울시 동대문구 용두동", "용두아파트"))
             .username("우정양")
             .password("dnwjd123@@@@")
-            .country("CN_zh")
+            .mobile("01033334444")
             .build();
 
         ResultActions step1 = this.mockMvc.perform(patch(ROOT_URI + "/{id}", account.getId())
@@ -152,9 +150,7 @@ public class AccountControllerTest {
             });
 
         assertEquals(updateDto.getNickname(), find.getNickname());
-        assertEquals(updateDto.getAddress(), find.getAddress());
         assertEquals(updateDto.getUsername(), find.getUsername());
-        assertEquals(updateDto.getCountry(), find.getCountry());
     }
 
     @Test
@@ -169,12 +165,10 @@ public class AccountControllerTest {
         String jwt2 = testUtils.signSupAndLogin(account2);
 
         AccountUpdateDto updateDto = AccountUpdateDto.builder()
-            .country("newcountry")
             .nickname("정우양")
-            .address(new Address("101010", "서울시 동대문구 용두동", "용두아파트"))
             .username("우정양")
             .password("dnwjd123@@@@")
-            .country("CN_zh")
+            .mobile("01033334444")
             .build();
 
         // when : 1번 계정의 정보를 2번 계정이 수정

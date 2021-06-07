@@ -50,9 +50,9 @@ public class TestUtils {
             .email(DEFAULT_EMAIL)
             .address(DEFAULT_ADDRESS)
             .password(DEFAULT_PASSWORD)
+            .mobile("01011112222")
             .username(DEFAULT_NAME)
             .nickname(DEFAULT_NICKNAME)
-            .country("ko-KR")
             .role(Role.USER)
             .build();
     }
@@ -63,10 +63,10 @@ public class TestUtils {
             Account account = Account.builder()
                 .email(String.format("email%d@email.com", i))
                 .address(DEFAULT_ADDRESS)
+                .mobile(String.format("0101111%04d", i))
                 .password(DEFAULT_PASSWORD)
                 .username(DEFAULT_NAME)
-                .nickname(DEFAULT_NICKNAME + (i+1))
-                .country("ko-KR")
+                .nickname(DEFAULT_NICKNAME + (i + 1))
                 .role(Role.USER)
                 .build();
             result.add(account);
@@ -80,9 +80,6 @@ public class TestUtils {
             .email(DEFAULT_EMAIL)
             .username(DEFAULT_NAME)
             .nickname(DEFAULT_NICKNAME)
-            .detailAddress(DEFAULT_ADDRESS.getDetailAddress())
-            .roadAddress(DEFAULT_ADDRESS.getRoadAddress())
-            .zipcode(DEFAULT_ADDRESS.getZipcode())
             .build();
     }
 
@@ -115,7 +112,7 @@ public class TestUtils {
         return provider.createToken(authenticationToken);
     }
 
-    public static Message createMessage(String message,Account sender,Account receiver){
+    public static Message createMessage(String message, Account sender, Account receiver) {
         return Message.builder()
             .content(message)
             .receiver(receiver)

@@ -22,11 +22,11 @@ public class AccountOwnerDto {
 
     private String email;
 
+    private String mobile;
+
     private String username;
 
     private String nickname;
-
-    private String country;
 
     private boolean isMemberShip;
 

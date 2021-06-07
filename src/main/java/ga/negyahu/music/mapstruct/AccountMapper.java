@@ -15,9 +15,6 @@ public interface AccountMapper {
 
     AccountMapper INSTANCE = Mappers.getMapper(AccountMapper.class);
 
-    @Mapping(source = "zipcode", target = "address.zipcode")
-    @Mapping(source = "roadAddress", target = "address.roadAddress")
-    @Mapping(source = "detailAddress", target = "address.detailAddress")
     Account from(AccountCreateDto accountCreateDto);
 
     Account from(Account account);

@@ -12,12 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ga.negyahu.music.account.Account;
+import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.exception.MessageNotFoundException;
 import ga.negyahu.music.message.dto.MessageSearch;
 import ga.negyahu.music.message.dto.MessageSendDto;
@@ -33,6 +33,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import jdk.jfr.Description;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -61,6 +62,8 @@ public class MessageControllerTest {
     private MessageRepository messageRepository;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private AccountRepository accountRepository;
 
     private List<Account> accounts;
     private String tokenOfZeroIndex;
@@ -74,6 +77,12 @@ public class MessageControllerTest {
         for (int i = 1; i < accountCnt; i++) {
             testUtils.signUpAccount(accounts.get(i));
         }
+    }
+
+    @AfterEach
+    public void destroy(){
+        this.messageRepository.deleteAll();
+        this.accountRepository.deleteAll();
     }
 
     @Test
@@ -95,7 +104,6 @@ public class MessageControllerTest {
 
         assertEquals(1, messageRepository.count());
 
-        actions.andDo(print());
     }
 
     @Test
@@ -126,7 +134,6 @@ public class MessageControllerTest {
 
         // when : 메세지 전송
         ResultActions request = postRequest(contentAsJson);
-        request.andDo(print());
         request.andExpect(status().isBadRequest())
         ;
         long count = this.messageRepository.count();
@@ -163,12 +170,11 @@ public class MessageControllerTest {
         Account receiver = this.accounts.get(0);
         Account sender = this.accounts.get(1);
         Message sendMessage = sendMessage(sender, receiver, "message");
-
+        String token = this.testUtils.loginAccount(receiver);
         ResultActions get = this.mockMvc
             .perform(get(ROOT_URL + "/{id}", sendMessage.getId())
-                .header(AUTHORIZATION, this.tokenOfZeroIndex)
-            )
-            .andDo(print());
+                .header(AUTHORIZATION, token)
+            );
 
         get.andExpect(jsonPath("$.id", is(sendMessage.getId().intValue())))
             .andExpect(jsonPath("$.content", is(sendMessage.getContent())))
@@ -291,9 +297,7 @@ public class MessageControllerTest {
             );
 
         // then : 403
-        patch2.andExpect(status().isForbidden())
-            .andDo(print())
-        ;
+        patch2.andExpect(status().isForbidden());
 
         Message updated = this.messageRepository.findById(sendMessage.getId()).get();
         assertNotEquals(dto.getContent(), updated.getContent(), "변경값이 적용되지 않는다.");
@@ -468,7 +472,7 @@ public class MessageControllerTest {
             .header(AUTHORIZATION, this.tokenOfZeroIndex)
             .contentType(MediaType.APPLICATION_JSON)
             .param("type", MessageType.SEND.name())
-        ).andDo(print());
+        );
 
         request.andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(10)))
@@ -487,7 +491,7 @@ public class MessageControllerTest {
             .header(AUTHORIZATION, this.tokenOfZeroIndex)
             .contentType(MediaType.APPLICATION_JSON)
             .param("type", MessageType.RECEIVE.name())
-        ).andDo(print());
+        );
 
         request.andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(5)))
@@ -506,7 +510,7 @@ public class MessageControllerTest {
             .header(AUTHORIZATION, this.tokenOfZeroIndex)
             .contentType(MediaType.APPLICATION_JSON)
             .param("type", MessageType.RECEIVE.name())
-        ).andDo(print());
+        );
 
         request.andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(5)))
@@ -530,7 +534,7 @@ public class MessageControllerTest {
             .param("type", MessageType.RECEIVE.name())
             .param("p", page.toString())
             .param("s", size.toString())
-        ).andDo(print());
+        );
 
         request.andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(size)))
@@ -609,7 +613,6 @@ public class MessageControllerTest {
             .header(AUTHORIZATION, token)
         );
 
-        delete.andDo(print());
         // then : 403
         delete.andExpect(status().isForbidden());
 
