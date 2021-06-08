@@ -31,7 +31,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.tomcat.util.http.fileupload.FileUpload;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -78,6 +81,9 @@ public class Account {
     @Column(updatable = false)
     private LocalDate signUpDate;
 
+    @Column
+    private LocalDate suspendUntil;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Area area;
 
@@ -91,9 +97,11 @@ public class Account {
     /* 연관관계 맵핑*/
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "account")
     @Builder.Default
+    @LazyCollection(LazyCollectionOption.EXTRA)
     private List<AccountFileUpLoad> fileUpLoads = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Subscribe> subscribes = new ArrayList<>();
 
     private void addSubscribes(Iterable<Subscribe> subscribes) {

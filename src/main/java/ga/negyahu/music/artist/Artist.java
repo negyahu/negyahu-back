@@ -1,10 +1,8 @@
 package ga.negyahu.music.artist;
 
-import ga.negyahu.music.account.Account;
-import ga.negyahu.music.agency.Agency;
+import ga.negyahu.music.agency.entity.Agency;
 import ga.negyahu.music.subscribe.Subscribe;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,20 +33,25 @@ public class Artist {
     @Column(name = "artist_id")
     private Long id;
 
-    @Column(name = "artist_name")
-    private String name;
+    @Column(name = "artist_name_kr",nullable = false,length = 30)
+    private String nameKR;
 
-    private String url;
+    @Column(name = "artist_name_en",nullable = false,length = 20)
+    private String nameEN;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agency_id")
     private Agency agency;
 
+    private ArtistType artistType;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "artist")
+    @Builder.Default
     private List<ArtistMember> members = new ArrayList<>();
 
     // 구독자 명단
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "artist")
+    @Builder.Default
     private List<Subscribe> subscribes = new ArrayList<>();
 
 }

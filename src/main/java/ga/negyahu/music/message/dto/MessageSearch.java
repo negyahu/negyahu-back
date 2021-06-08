@@ -13,6 +13,7 @@ public class MessageSearch {
 
     private Long accountId;
 
+    @Builder.Default
     private MessageType type = MessageType.ALL;
 
 }

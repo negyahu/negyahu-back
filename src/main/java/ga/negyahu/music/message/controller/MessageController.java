@@ -1,7 +1,8 @@
-package ga.negyahu.music.message;
+package ga.negyahu.music.message.controller;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.mapstruct.MessageMapper;
+import ga.negyahu.music.message.Message;
 import ga.negyahu.music.message.dto.MessageDto;
 import ga.negyahu.music.message.dto.MessageSearch;
 import ga.negyahu.music.message.dto.MessageSendDto;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

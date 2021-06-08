@@ -1,6 +1,6 @@
 package ga.negyahu.music.agency.repository;
 
-import ga.negyahu.music.agency.AgencyMember;
+import ga.negyahu.music.agency.entity.AgencyMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 

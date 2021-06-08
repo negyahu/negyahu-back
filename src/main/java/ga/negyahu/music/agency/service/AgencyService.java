@@ -1,6 +1,6 @@
 package ga.negyahu.music.agency.service;
 
-import ga.negyahu.music.agency.Agency;
+import ga.negyahu.music.agency.entity.Agency;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
