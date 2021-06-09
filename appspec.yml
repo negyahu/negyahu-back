@@ -1,0 +1,26 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/back/
+    overwrite: yes
+
+permissions:
+  - object: /
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+
+hooks:
+  ApplicationStart:
+    - location: hooks/new_start_spring.sh
+      timeout: 180
+      runas: ubuntu
+
+    - location: hooks/check_new_server.sh
+      timeout: 200
+      runas: ubuntu
+
+    - location: hooks/nginx_reload.sh
+      timeout: 180
+      runas: ubuntu
