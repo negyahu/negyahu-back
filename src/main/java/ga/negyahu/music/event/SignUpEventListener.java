@@ -11,6 +11,7 @@ import javax.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -19,17 +20,17 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-@Profile({"prod","dev"})
-public class SignUpEventHandler {
+@Profile({"prod", "dev"})
+public class SignUpEventListener implements ApplicationListener<SignUpEvent> {
 
     private final MailService mailService;
 
     @Async
-    @EventListener
-    public void sendSignUpMessage(SignUpEvent event) {
+    @Override
+    public void onApplicationEvent(SignUpEvent event) {
         SignUpMail signUpMail = event.getSignUpMail();
 
-        if(isNull(signUpMail) || isNull(signUpMail.getAccount())) {
+        if (isNull(signUpMail) || isNull(signUpMail.getAccount())) {
             log.info("메일발송 실패");
         }
         try {
@@ -37,6 +38,5 @@ public class SignUpEventHandler {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-
     }
 }
