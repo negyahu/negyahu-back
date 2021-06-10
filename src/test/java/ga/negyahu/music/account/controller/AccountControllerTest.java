@@ -21,9 +21,12 @@ import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.exception.AccountNotFoundException;
 import ga.negyahu.music.utils.DataJpaTestConfig;
 import ga.negyahu.music.utils.TestUtils;
+import ga.negyahu.music.utils.annotation.CustomSpringBootTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,10 +37,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+import springfox.boot.starter.autoconfigure.OpenApiAutoConfiguration;
 
-@SpringBootTest
-@Transactional
-@AutoConfigureMockMvc
+@CustomSpringBootTest
 public class AccountControllerTest {
 
     @Autowired
@@ -50,6 +52,17 @@ public class AccountControllerTest {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private TestUtils testUtils;
+    @Autowired
+    private DefaultListableBeanFactory beanFactory;
+
+    @Test
+    public void test(){
+        String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
+        for(String name : beanDefinitionNames){
+            System.out.println(name);
+        }
+        System.out.println("count:"+ beanDefinitionNames.length );
+    }
 
     @AfterEach
     public void destroy(){

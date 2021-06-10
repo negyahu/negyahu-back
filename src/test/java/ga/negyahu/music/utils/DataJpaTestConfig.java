@@ -2,18 +2,15 @@ package ga.negyahu.music.utils;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.account.service.AccountService;
 import ga.negyahu.music.account.service.AccountServiceImpl;
-import ga.negyahu.music.event.SignUpEvent;
-import ga.negyahu.music.event.SignUpEventHandler;
+import ga.negyahu.music.event.SignUpEventListener;
 import ga.negyahu.music.security.utils.JwtTokenProvider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -32,12 +29,16 @@ public class DataJpaTestConfig {
     @PersistenceContext
     public EntityManager entityManager;
 
+    @Bean
+    public SignUpEventListener signUpEventHandler(){
+        SignUpEventListener mock = mock(SignUpEventListener.class);
+        return mock;
+    }
+
     @Primary
     @Bean
     public AccountService accountService() {
-        SignUpEventHandler mock = mock(SignUpEventHandler.class);
-        return new AccountServiceImpl(this.accountRepository, passwordEncoder(),
-            mock);
+        return new AccountServiceImpl(this.accountRepository, passwordEncoder());
     }
 
     @Bean

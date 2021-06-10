@@ -29,7 +29,6 @@ public class TestUtils {
         "성신여대입구역 5번출구");
 
     private final AccountService accountService;
-
     private final JwtTokenProvider provider;
 
     public TestUtils(AccountService accountService,
