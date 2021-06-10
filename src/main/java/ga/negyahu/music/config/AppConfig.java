@@ -3,6 +3,7 @@ package ga.negyahu.music.config;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.sql.JPASQLQuery;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.modelmapper.Conditions;
@@ -11,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -27,6 +31,7 @@ public class AppConfig {
         modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
         return modelMapper;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -44,7 +49,7 @@ public class AppConfig {
     }
 
     @Bean
-    public JPAQueryFactory jpaQueryFactory(){
+    public JPAQueryFactory jpaQueryFactory() {
         return new JPAQueryFactory(entityManager);
     }
 

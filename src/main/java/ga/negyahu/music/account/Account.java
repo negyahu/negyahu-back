@@ -92,6 +92,8 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private State state;
 
+    private boolean certifiedEmail;
+
     private String certifyCode;
 
     /* 연관관계 맵핑*/
