@@ -13,4 +13,6 @@ public interface AccountService {
     Account update(Account account);
 
     void delete(Long id);
+
+    boolean certifyEmailCode(Long id,String code);
 }

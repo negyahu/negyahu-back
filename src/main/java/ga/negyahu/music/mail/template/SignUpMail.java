@@ -23,21 +23,22 @@ public class SignUpMail implements ReceiverContext {
 
     @Override
     public void setReceiver(final MimeMessageHelper helper) throws MessagingException {
-        Validate.notEmpty(account.getEmail(),"[ERROR] 올바르지 못한 수신자 정보입니다.");
-        Validate.notEmpty(account.getUsername(),"[ERROR] 올바르지 못한 수신자 정보입니다.");
+        Validate.notEmpty(account.getEmail(), "[ERROR] 올바르지 못한 수신자 정보입니다.");
+        Validate.notEmpty(account.getUsername(), "[ERROR] 올바르지 못한 수신자 정보입니다.");
 
         helper.setTo(account.getEmail());
-        helper.setSubject(account.getUsername()+"님 회원가입을 축하드립니다!!");
+        helper.setSubject(account.getUsername() + "님 회원가입을 축하드립니다!!");
     }
 
     @Override
-    public Context getContext(){
-        Validate.notEmpty(account.getEmail(),"[ERROR] 올바르지 못한 수신자 정보입니다.");
+    public Context getContext() {
+        Validate.notEmpty(account.getEmail(), "[ERROR] 올바르지 못한 수신자 정보입니다.");
 
         Context context = new Context();
-        context.setVariable("email",this.account.getEmail());
-        context.setVariable("username",this.account.getUsername());
+        context.setVariable("email", this.account.getEmail());
+        context.setVariable("username", this.account.getUsername());
         context.setVariable("message", this.message);
+        context.setVariable("code", account.getCertifyCode());
         return context;
     }
 

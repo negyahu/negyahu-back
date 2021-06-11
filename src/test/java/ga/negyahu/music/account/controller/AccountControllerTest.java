@@ -8,6 +8,7 @@ import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -18,10 +19,14 @@ import ga.negyahu.music.account.dto.AccountUpdateDto;
 import ga.negyahu.music.account.entity.Address;
 import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.repository.AccountRepository;
+import ga.negyahu.music.account.service.AccountService;
+import ga.negyahu.music.account.service.AccountServiceImpl;
 import ga.negyahu.music.exception.AccountNotFoundException;
 import ga.negyahu.music.utils.DataJpaTestConfig;
 import ga.negyahu.music.utils.TestUtils;
 import ga.negyahu.music.utils.annotation.CustomSpringBootTest;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +35,9 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Description;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
@@ -51,24 +58,9 @@ public class AccountControllerTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private TestUtils testUtils;
+    private AccountService accountService;
     @Autowired
-    private DefaultListableBeanFactory beanFactory;
-
-    @Test
-    public void test(){
-        String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
-        for(String name : beanDefinitionNames){
-            System.out.println(name);
-        }
-        System.out.println("count:"+ beanDefinitionNames.length );
-    }
-
-    @AfterEach
-    public void destroy(){
-        this.accountRepository.deleteAll();
-        SecurityContextHolder.getContext().setAuthentication(null);
-    }
+    private TestUtils testUtils;
 
     @Test
     public void 회원가입_성공() throws Exception {
@@ -197,7 +189,83 @@ public class AccountControllerTest {
         step1.andExpect(status().isForbidden());
     }
 
-    private AccountUpdateDto crateUpdateDto(){
+    @Test
+    public void 이메일인증_테스트() throws Exception {
+
+        // given
+        Account account = TestUtils.createDefaultAccount();
+        Account save = this.accountService.signUp(account);
+
+        // when
+        this.mockMvc.perform(get(ROOT_URI + "/{id}/email", save.getId())
+            .param("code", save.getCertifyCode())
+            .contentType(APPLICATION_JSON_VALUE)
+        )
+            .andDo(print());
+
+        // then : 토큰일치 인증된 이메일로 변경되고 기존의 확인코드는 null 로 변경
+        Account find = this.accountRepository.findById(save.getId()).get();
+        assertEquals(true, find.isCertifiedEmail(),"true로 변경되어야 한다.");
+        assertEquals(null, find.getCertifyCode(),"기존의 코드는 삭제된다.");
+    }
+
+    @Description("인증코드는 24시간동안 유효하다.")
+    @Test
+    public void 만료된_코드_테스트() throws Exception {
+
+        // given
+        Account account = TestUtils.createDefaultAccount();
+        Account save = this.accountService.signUp(account);
+        LocalDateTime targetTime = LocalDateTime.now().minusDays(2);
+        String time = targetTime.format(AccountServiceImpl.formatter);
+        String uuid = UUID.randomUUID().toString();
+        String expiredCode = time + uuid;
+        save.setCertifyCode(expiredCode);
+
+        // when
+        ResultActions actions = this.mockMvc.perform(get(ROOT_URI + "/{id}/email", save.getId())
+            .param("code", save.getCertifyCode())
+            .contentType(APPLICATION_JSON_VALUE)
+        )
+            .andDo(print());
+
+        actions.andExpect(status().isBadRequest());
+
+        // then : 토큰일치 인증된 이메일로 변경되고 기존의 확인코드는 null 로 변경
+        Account find = this.accountRepository.findById(save.getId()).get();
+        assertEquals(false, find.isCertifiedEmail(),"기본값 false 를 유지한다.");
+        assertEquals(expiredCode, find.getCertifyCode(),"코드는 변경되지 않는다.");
+    }
+
+    @Test
+    public void 잘못된_코드_테스트() throws Exception {
+
+        // given
+        Account account = TestUtils.createDefaultAccount();
+        Account save = this.accountService.signUp(account);
+        LocalDateTime targetTime = LocalDateTime.now().minusDays(2);
+        String time = targetTime.format(AccountServiceImpl.formatter);
+        String uuid = UUID.randomUUID().toString();
+        String expiredCode = time + uuid;
+        save.setCertifyCode(expiredCode);
+
+        // when
+        ResultActions actions = this.mockMvc.perform(get(ROOT_URI + "/{id}/email", save.getId())
+            .param("code", save.getCertifyCode()+"addString")
+            .contentType(APPLICATION_JSON_VALUE)
+        )
+            .andDo(print());
+
+        actions.andExpect(status().isBadRequest());
+
+        // then : 토큰일치 인증된 이메일로 변경되고 기존의 확인코드는 null 로 변경
+        Account find = this.accountRepository.findById(save.getId()).get();
+        assertEquals(false, find.isCertifiedEmail(),"기본값 false 를 유지한다.");
+        assertEquals(expiredCode, find.getCertifyCode(),"코드는 변경되지 않는다.");
+    }
+
+
+    private AccountUpdateDto crateUpdateDto() {
         return AccountUpdateDto.builder()
             .nickname("정우양")
             .username("우정양")

@@ -15,4 +15,18 @@ public class ResultMessage {
 
     private String message;
 
+    public static final ResultMessage createFailMessage(String message) {
+        return ResultMessage.builder()
+            .result(Result.FAIL)
+            .message(message)
+            .build();
+    }
+
+    public static final ResultMessage createSuccessMessage(String message) {
+        return ResultMessage.builder()
+            .result(Result.SUCCESS)
+            .message(message)
+            .build();
+    }
+
 }

@@ -8,6 +8,8 @@ import ga.negyahu.music.account.dto.AccountDto;
 import ga.negyahu.music.account.dto.AccountOwnerDto;
 import ga.negyahu.music.account.dto.AccountUpdateDto;
 import ga.negyahu.music.account.service.AccountService;
+import ga.negyahu.music.exception.Result;
+import ga.negyahu.music.exception.ResultMessage;
 import ga.negyahu.music.mapstruct.AccountMapper;
 import ga.negyahu.music.security.annotation.LoginUser;
 import ga.negyahu.music.validator.AccountCreateDtoValidator;
@@ -19,7 +21,9 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -36,12 +40,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @ApiOperation(value = "/api/accounts", tags = "AccountController API")
 @RestController
-@RequestMapping(value = ROOT_URI, consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ROOT_URI)
 @RequiredArgsConstructor
 public class AccountController {
 
@@ -78,7 +83,7 @@ public class AccountController {
     }
 
     @GetMapping(value = "/{id}")
-    @ApiParam(name = "id",example = "1",value = "조회할 회원의 고유번호",required = true,type = "path")
+    @ApiParam(name = "id", example = "1", value = "조회할 회원의 고유번호", required = true, type = "path")
     public ResponseEntity fetch(@PathVariable Long id, @LoginUser Account loginUser) {
         Account account = this.accountService.fetch(id);
 
@@ -115,6 +120,21 @@ public class AccountController {
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
         return id.toString();
+    }
+
+    @GetMapping(value = "/{id}/email")
+    public ResponseEntity certifyEmail(@PathVariable Long id, @RequestParam("code") String code) {
+        try {
+            boolean result = this.accountService.certifyEmailCode(id, code);
+            if (result) {
+                return ResponseEntity.ok().body(ResultMessage.createSuccessMessage("이메일 인증 완료"));
+            }
+            return ResponseEntity.badRequest()
+                .body(ResultMessage.createFailMessage("[ERROR] 유요한 토큰이 아닙니다."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                .body(ResultMessage.createFailMessage("[ERROR] 유요한 토큰이 아닙니다."));
+        }
     }
 
 }
