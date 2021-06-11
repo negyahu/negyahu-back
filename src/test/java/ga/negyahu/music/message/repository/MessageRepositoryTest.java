@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.message.Message;
-import ga.negyahu.music.message.MessageResult;
-import ga.negyahu.music.message.dto.MessageOnlyIds;
 import ga.negyahu.music.utils.DataJpaTestConfig;
 import ga.negyahu.music.utils.TestUtils;
 import java.time.LocalDateTime;

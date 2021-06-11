@@ -1,18 +1,13 @@
 package ga.negyahu.music.config;
 
-import com.querydsl.core.annotations.Config;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import org.springframework.boot.autoconfigure.template.TemplateLocation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
-import org.thymeleaf.templateresolver.StringTemplateResolver;
 
 /*
 * REST API 서버라서 따로 ViewRendering 을 위한 TemplateEngine 이 필요하지 않기 때문에,

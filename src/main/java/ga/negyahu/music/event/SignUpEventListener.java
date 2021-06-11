@@ -1,26 +1,21 @@
 package ga.negyahu.music.event;
 
-import static java.util.Objects.*;
+import static java.util.Objects.isNull;
 
-import ga.negyahu.music.account.Account;
 import ga.negyahu.music.mail.MailService;
-import ga.negyahu.music.mail.MailServiceImpl;
 import ga.negyahu.music.mail.template.SignUpMail;
-import java.util.Objects;
 import javax.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
-@Profile({"prod", "dev"})
+@Profile({"prod"})
 public class SignUpEventListener implements ApplicationListener<SignUpEvent> {
 
     private final MailService mailService;

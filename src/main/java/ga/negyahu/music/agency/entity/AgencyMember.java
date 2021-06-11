@@ -2,8 +2,6 @@ package ga.negyahu.music.agency.entity;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.entity.State;
-import ga.negyahu.music.agency.entity.Agency;
-import ga.negyahu.music.agency.entity.AgencyRole;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;

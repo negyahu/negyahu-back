@@ -1,6 +1,6 @@
 package ga.negyahu.music.exception.handler;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 import ga.negyahu.music.exception.AccountNotFoundException;
 import ga.negyahu.music.exception.AreaNotFountException;
@@ -9,11 +9,9 @@ import ga.negyahu.music.exception.MessageAlreadyOpenException;
 import ga.negyahu.music.exception.MessageNotFoundException;
 import ga.negyahu.music.exception.Result;
 import ga.negyahu.music.exception.ResultMessage;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

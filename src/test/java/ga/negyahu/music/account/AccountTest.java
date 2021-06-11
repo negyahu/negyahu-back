@@ -1,15 +1,12 @@
 package ga.negyahu.music.account;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.utils.DataJpaTestConfig;
 import ga.negyahu.music.utils.TestUtils;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

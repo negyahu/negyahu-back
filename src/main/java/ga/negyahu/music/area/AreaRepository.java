@@ -1,6 +1,5 @@
 package ga.negyahu.music.area;
 
-import ga.negyahu.music.account.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

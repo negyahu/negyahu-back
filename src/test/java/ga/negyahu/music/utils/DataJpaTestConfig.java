@@ -1,6 +1,5 @@
 package ga.negyahu.music.utils;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;

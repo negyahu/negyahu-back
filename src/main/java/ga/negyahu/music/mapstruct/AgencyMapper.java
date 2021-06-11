@@ -4,8 +4,6 @@ import ga.negyahu.music.agency.dto.AgencyCreateDto;
 import ga.negyahu.music.agency.entity.Agency;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.ValueMapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")

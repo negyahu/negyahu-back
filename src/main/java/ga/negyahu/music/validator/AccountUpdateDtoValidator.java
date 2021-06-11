@@ -2,8 +2,6 @@ package ga.negyahu.music.validator;
 
 import static java.util.Objects.isNull;
 
-import ga.negyahu.music.account.Account;
-import ga.negyahu.music.account.dto.AccountCreateDto;
 import ga.negyahu.music.account.dto.AccountUpdateDto;
 import ga.negyahu.music.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;

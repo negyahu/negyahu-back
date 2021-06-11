@@ -1,6 +1,5 @@
 package ga.negyahu.music.message.service;
 
-import ga.negyahu.music.account.Account;
 import ga.negyahu.music.message.Message;
 import ga.negyahu.music.message.dto.MessageDto;
 import ga.negyahu.music.message.dto.MessageSearch;

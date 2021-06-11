@@ -1,26 +1,20 @@
 package ga.negyahu.music.message.repository;
 
-import static ga.negyahu.music.account.QAccount.*;
-import static ga.negyahu.music.message.QMessage.*;
+import static ga.negyahu.music.account.QAccount.account;
+import static ga.negyahu.music.message.QMessage.message;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import ga.negyahu.music.account.QAccount;
-import ga.negyahu.music.message.Message;
-import ga.negyahu.music.message.QMessage;
 import ga.negyahu.music.message.dto.MessageDto;
 import ga.negyahu.music.message.dto.MessageSearch;
 import ga.negyahu.music.message.dto.MessageType;
 import ga.negyahu.music.message.dto.QMessageDto;
-import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.jaxb.SpringDataJaxb.PageDto;
 import org.springframework.stereotype.Component;
 
 @Component

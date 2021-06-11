@@ -3,7 +3,6 @@ package ga.negyahu.music.area.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ga.negyahu.music.account.Account;
-import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.area.Area;
 import ga.negyahu.music.area.AreaRepository;
 import ga.negyahu.music.utils.DataJpaTestConfig;

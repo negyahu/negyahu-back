@@ -1,13 +1,12 @@
 package ga.negyahu.music.message.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.message.Message;
 import ga.negyahu.music.message.dto.MessageDto;
 import ga.negyahu.music.message.dto.MessageSearch;
 import ga.negyahu.music.message.dto.MessageType;
-import ga.negyahu.music.message.service.MessageService;
 import ga.negyahu.music.utils.DataJpaTestConfig;
 import ga.negyahu.music.utils.TestUtils;
 import java.util.ArrayList;
@@ -16,10 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 @DataJpaTest

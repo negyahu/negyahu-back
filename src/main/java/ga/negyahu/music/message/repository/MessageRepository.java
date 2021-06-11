@@ -1,7 +1,6 @@
 package ga.negyahu.music.message.repository;
 
 import ga.negyahu.music.message.Message;
-import ga.negyahu.music.message.MessageResult;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

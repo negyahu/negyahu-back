@@ -1,10 +1,5 @@
 package ga.negyahu.music.mapstruct;
 
-import ga.negyahu.music.account.Account;
-import ga.negyahu.music.account.dto.AccountCreateDto;
-import ga.negyahu.music.account.dto.AccountDto;
-import ga.negyahu.music.account.dto.AccountOwnerDto;
-import ga.negyahu.music.account.dto.AccountUpdateDto;
 import ga.negyahu.music.message.Message;
 import ga.negyahu.music.message.dto.MessageDto;
 import ga.negyahu.music.message.dto.MessageSendDto;

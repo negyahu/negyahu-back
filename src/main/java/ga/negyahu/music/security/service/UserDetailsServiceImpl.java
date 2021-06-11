@@ -6,14 +6,12 @@ import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.security.AccountContext;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 //@Service("userDetailsService")
 @Component("userDetailsService")

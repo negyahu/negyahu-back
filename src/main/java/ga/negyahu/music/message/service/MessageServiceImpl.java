@@ -1,9 +1,6 @@
 package ga.negyahu.music.message.service;
 
-import static java.util.Objects.isNull;
-
 import ga.negyahu.music.account.Account;
-import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.account.service.AccountService;
 import ga.negyahu.music.exception.AccountNotFoundException;
 import ga.negyahu.music.exception.BadMessageRequestException;
@@ -11,15 +8,11 @@ import ga.negyahu.music.exception.MessageAlreadyOpenException;
 import ga.negyahu.music.exception.MessageNotFoundException;
 import ga.negyahu.music.message.Message;
 import ga.negyahu.music.message.dto.MessageDto;
-import ga.negyahu.music.message.dto.MessageOnlyIds;
 import ga.negyahu.music.message.dto.MessageSearch;
 import ga.negyahu.music.message.repository.MessageRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;

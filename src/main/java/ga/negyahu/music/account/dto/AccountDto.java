@@ -1,8 +1,6 @@
 package ga.negyahu.music.account.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import ga.negyahu.music.account.entity.Address;
-import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.area.Area;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

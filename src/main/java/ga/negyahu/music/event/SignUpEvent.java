@@ -2,9 +2,7 @@ package ga.negyahu.music.event;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.mail.template.SignUpMail;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.context.ApplicationEvent;
 
 @Getter

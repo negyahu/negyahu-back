@@ -1,11 +1,7 @@
 package ga.negyahu.music.config;
 
-import ga.negyahu.music.account.controller.AccountController;
 import ga.negyahu.music.security.annotation.LoginUser;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.validation.Errors;

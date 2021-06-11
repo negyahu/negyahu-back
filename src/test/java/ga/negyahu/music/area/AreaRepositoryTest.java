@@ -3,7 +3,6 @@ package ga.negyahu.music.area;
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.utils.DataJpaTestConfig;
 import ga.negyahu.music.utils.TestUtils;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

@@ -1,6 +1,6 @@
 package ga.negyahu.music.validator;
 
-import static java.util.Objects.*;
+import static java.util.Objects.isNull;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.dto.AccountCreateDto;
@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 @Component

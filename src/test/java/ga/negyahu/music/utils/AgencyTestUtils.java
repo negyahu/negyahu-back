@@ -1,7 +1,6 @@
 package ga.negyahu.music.utils;
 
 import ga.negyahu.music.agency.dto.AgencyCreateDto;
-import ga.negyahu.music.agency.entity.Agency;
 import org.springframework.stereotype.Component;
 
 @Component

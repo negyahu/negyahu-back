@@ -1,7 +1,6 @@
 package ga.negyahu.music.agency;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ga.negyahu.music.agency.dto.AgencyCreateDto;

@@ -1,7 +1,5 @@
 package ga.negyahu.music.security.filter;
 
-import ga.negyahu.music.account.Account;
-import ga.negyahu.music.security.AccountContext;
 import ga.negyahu.music.security.utils.JwtTokenProvider;
 import java.io.IOException;
 import java.util.Objects;
