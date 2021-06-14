@@ -130,5 +130,4 @@ public class AccountController {
                 .body(ResultMessage.createFailMessage("[ERROR] 유요한 토큰이 아닙니다."));
         }
     }
-
 }

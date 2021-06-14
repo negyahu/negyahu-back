@@ -10,6 +10,7 @@ import ga.negyahu.music.account.Account;
 import ga.negyahu.music.security.config.JwtSecurityConfig;
 import ga.negyahu.music.security.dto.LoginRequest;
 import ga.negyahu.music.utils.TestUtils;
+import ga.negyahu.music.utils.annotation.CustomSpringBootTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+@CustomSpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 public class SecurityConfigTest {
 
     @Autowired

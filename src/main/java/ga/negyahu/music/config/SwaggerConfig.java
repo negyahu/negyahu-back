@@ -26,7 +26,8 @@ public class SwaggerConfig {
             .useDefaultResponseMessages(false)
             .select()
             .apis(RequestHandlerSelectors.basePackage("ga.negyahu.music"))
-            .paths(PathSelectors.any()).build();
+            .paths(PathSelectors.any()).build()
+            ;
 
     }
 

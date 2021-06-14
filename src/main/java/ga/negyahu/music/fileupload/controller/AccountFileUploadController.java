@@ -1,0 +1,71 @@
+package ga.negyahu.music.fileupload.controller;
+
+import ga.negyahu.music.account.Account;
+import ga.negyahu.music.fileupload.entity.AccountFileUpload;
+import ga.negyahu.music.fileupload.entity.BaseFileUpload;
+import ga.negyahu.music.fileupload.service.FileUploadService;
+import ga.negyahu.music.fileupload.util.FileUploadUtil;
+import ga.negyahu.music.security.annotation.LoginUser;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.UUID;
+import javax.imageio.ImageIO;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+@RestController
+@RequiredArgsConstructor
+public class AccountFileUploadController {
+
+    @Qualifier("accountFileUploadService")
+    private final FileUploadService fileUploadService;
+
+    public static final String ACCOUNT_FILE_URL = "/api/accounts/{id}/upload";
+
+
+    /*
+     * account 개인이미지 업로
+     * */
+    @PostMapping(value = ACCOUNT_FILE_URL
+        , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity uploadImage(@RequestParam("file") MultipartFile multipartFile, @LoginUser
+        Account user) throws IOException {
+        BaseFileUpload baseFileUpload = this.fileUploadService.saveFile(multipartFile, user);
+
+        URI uri = WebMvcLinkBuilder
+            .linkTo(WebMvcLinkBuilder.methodOn(AccountFileUploadController.class)
+                .loadImage(baseFileUpload.getFullFilePath()))
+            .slash(baseFileUpload.getFullFilePath()).toUri();
+
+        return ResponseEntity.created(uri).build();
+    }
+
+    /*
+    * account 개인이미지 로드
+    * */
+    @GetMapping(value = "/api/file/accounts"
+        , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity loadImage(@RequestParam("fileName") String fileName)
+        throws IOException {
+        File file = this.fileUploadService.getFileByFileName(fileName);
+//        BufferedImage read = ImageIO.read(file);
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        ImageIO.write(read, "png", baos);
+//        baos.flush();
+        IOUtils.toByteArray(file.toURI());
+        return ResponseEntity.ok(IOUtils.toByteArray(file.toURI()));
+    }
+}

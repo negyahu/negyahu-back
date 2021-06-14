@@ -6,7 +6,8 @@ import ga.negyahu.music.account.entity.Address;
 import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.area.Area;
-import ga.negyahu.music.fileupload.account.AccountFileUpLoad;
+import ga.negyahu.music.fileupload.entity.AccountFileUpload;
+import ga.negyahu.music.fileupload.entity.FileUpload;
 import ga.negyahu.music.subscribe.Subscribe;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Builder
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
-public class Account {
+public class Account implements FileUpload {
 
     @Id
     @GeneratedValue
@@ -98,7 +99,7 @@ public class Account {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "account")
     @Builder.Default
     @LazyCollection(LazyCollectionOption.EXTRA)
-    private List<AccountFileUpLoad> fileUpLoads = new ArrayList<>();
+    private List<AccountFileUpload> fileUpLoads = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -121,4 +122,13 @@ public class Account {
         }
     }
 
+    @Override
+    public Object getEntity() {
+        return this;
+    }
+
+    @Override
+    public Long getFK() {
+        return null;
+    }
 }

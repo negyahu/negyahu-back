@@ -9,16 +9,17 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-@EnableAsync
-@EnableAspectJAutoProxy
 @EnableJpaRepositories
 @EnableJpaAuditing
+@EnableAsync
+@EnableAspectJAutoProxy
 @SpringBootApplication(
     exclude = {
         UserDetailsServiceAutoConfiguration.class,  //  507
         ThymeleafAutoConfiguration.class  //487
     }
 )
+
 public class MusicApplication {
 
     public static void main(String[] args) {

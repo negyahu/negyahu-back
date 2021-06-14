@@ -1,5 +1,6 @@
-package ga.negyahu.music.fileupload.account;
+package ga.negyahu.music.fileupload.entity;
 
+import com.fasterxml.jackson.databind.ser.Serializers.Base;
 import ga.negyahu.music.account.Account;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,37 +15,25 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @EqualsAndHashCode(of = "id")
-public class AccountFileUpLoad {
+@SuperBuilder
+public class AccountFileUpload extends BaseFileUpload {
 
-    @Id @GeneratedValue
-    @Column(name = "file_upload_id")
+    @Id
+    @GeneratedValue
+    @Column(name = "file_id")
     private Long id;
-
-    @Column(length = 100)   // 사용자가 업로드 당시 설정한 파일이름
-    private String originalName;
-
-    @Column(length = 100)   // 실제 저장되는 파일이름 (UUID + 원명)
-    private String fileName;
-
-    @Column(length = 100)   // 실제 파일이 저장되는 위치
-    private String filePath;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
-
-    private boolean isDeleted;
-
-    private String getFullPath() {
-        return this.filePath+fileName;
-    }
 
 }

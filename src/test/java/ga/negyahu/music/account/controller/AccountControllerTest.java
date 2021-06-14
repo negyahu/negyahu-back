@@ -195,8 +195,8 @@ public class AccountControllerTest {
 
         // then : 토큰일치 인증된 이메일로 변경되고 기존의 확인코드는 null 로 변경
         Account find = this.accountRepository.findById(save.getId()).get();
-        assertEquals(true, find.isCertifiedEmail(),"true로 변경되어야 한다.");
-        assertEquals(null, find.getCertifyCode(),"기존의 코드는 삭제된다.");
+        assertEquals(true, find.isCertifiedEmail(), "true로 변경되어야 한다.");
+        assertEquals(null, find.getCertifyCode(), "기존의 코드는 삭제된다.");
     }
 
     @Description("인증코드는 24시간동안 유효하다.")
@@ -223,8 +223,8 @@ public class AccountControllerTest {
 
         // then : 토큰일치 인증된 이메일로 변경되고 기존의 확인코드는 null 로 변경
         Account find = this.accountRepository.findById(save.getId()).get();
-        assertEquals(false, find.isCertifiedEmail(),"기본값 false 를 유지한다.");
-        assertEquals(expiredCode, find.getCertifyCode(),"코드는 변경되지 않는다.");
+        assertEquals(false, find.isCertifiedEmail(), "기본값 false 를 유지한다.");
+        assertEquals(expiredCode, find.getCertifyCode(), "코드는 변경되지 않는다.");
     }
 
     @Test
@@ -241,7 +241,7 @@ public class AccountControllerTest {
 
         // when
         ResultActions actions = this.mockMvc.perform(get(ROOT_URI + "/{id}/email", save.getId())
-            .param("code", save.getCertifyCode()+"addString")
+            .param("code", save.getCertifyCode() + "addString")
             .contentType(APPLICATION_JSON_VALUE)
         )
             .andDo(print());
@@ -250,8 +250,8 @@ public class AccountControllerTest {
 
         // then : 토큰일치 인증된 이메일로 변경되고 기존의 확인코드는 null 로 변경
         Account find = this.accountRepository.findById(save.getId()).get();
-        assertEquals(false, find.isCertifiedEmail(),"기본값 false 를 유지한다.");
-        assertEquals(expiredCode, find.getCertifyCode(),"코드는 변경되지 않는다.");
+        assertEquals(false, find.isCertifiedEmail(), "기본값 false 를 유지한다.");
+        assertEquals(expiredCode, find.getCertifyCode(), "코드는 변경되지 않는다.");
     }
 
 

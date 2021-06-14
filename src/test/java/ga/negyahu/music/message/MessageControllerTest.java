@@ -29,6 +29,7 @@ import ga.negyahu.music.message.repository.MessageRepository;
 import ga.negyahu.music.message.service.MessageService;
 import ga.negyahu.music.utils.MessageTestUtils;
 import ga.negyahu.music.utils.TestUtils;
+import ga.negyahu.music.utils.annotation.CustomSpringBootTest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -46,9 +47,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+@CustomSpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 public class MessageControllerTest {
 
     @Autowired
