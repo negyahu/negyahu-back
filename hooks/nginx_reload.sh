@@ -5,9 +5,9 @@ TARGET_PORT=0
 echo "> Nginx currently proxies to ${CURRENT_PORT}."
 
 if [ ${CURRENT_PORT} -eq 8001 ]; then
-  TARGET_PORT=8082
+  TARGET_PORT=8002
 elif [ ${CURRENT_PORT} -eq 8002 ]; then
-  TARGET_PORT=8081
+  TARGET_PORT=8001
 else
   echo "> No WAS is connected to nginx"
   exit 1
