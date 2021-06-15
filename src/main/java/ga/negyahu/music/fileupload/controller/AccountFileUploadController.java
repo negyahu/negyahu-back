@@ -1,5 +1,7 @@
 package ga.negyahu.music.fileupload.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.fileupload.entity.AccountFileUpload;
 import ga.negyahu.music.fileupload.entity.BaseFileUpload;
@@ -20,7 +22,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,30 +46,25 @@ public class AccountFileUploadController {
     @PostMapping(value = ACCOUNT_FILE_URL
         , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity uploadImage(@RequestParam("file") MultipartFile multipartFile, @LoginUser
-        Account user) throws IOException {
+        Account user, @PathVariable("id") Long accountId) throws IOException {
+        if (!user.getId().equals(accountId)) {
+            throw new AccessDeniedException("[ERROR] 접근할 수 없습니다.");
+        }
         BaseFileUpload baseFileUpload = this.fileUploadService.saveFile(multipartFile, user);
 
-        URI uri = WebMvcLinkBuilder
-            .linkTo(WebMvcLinkBuilder.methodOn(AccountFileUploadController.class)
-                .loadImage(baseFileUpload.getFullFilePath()))
-            .slash(baseFileUpload.getFullFilePath()).toUri();
-
+        URI uri = linkTo(methodOn(AccountFileUploadController.class).loadImage(accountId)).toUri();
         return ResponseEntity.created(uri).build();
     }
 
     /*
-    * account 개인이미지 로드
-    * */
-    @GetMapping(value = "/api/file/accounts"
+     * account 개인이미지 로드
+     * */
+    @GetMapping(value = ACCOUNT_FILE_URL
         , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity loadImage(@RequestParam("fileName") String fileName)
+    public ResponseEntity loadImage(@PathVariable("accountId") Long accountId)
         throws IOException {
-        File file = this.fileUploadService.getFileByFileName(fileName);
-//        BufferedImage read = ImageIO.read(file);
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        ImageIO.write(read, "png", baos);
-//        baos.flush();
-        IOUtils.toByteArray(file.toURI());
-        return ResponseEntity.ok(IOUtils.toByteArray(file.toURI()));
+        File accountImageFile = this.fileUploadService.getFileByAccountId(accountId);
+        IOUtils.toByteArray(accountImageFile.toURI());
+        return ResponseEntity.ok(IOUtils.toByteArray(accountImageFile.toURI()));
     }
 }

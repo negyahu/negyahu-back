@@ -5,11 +5,9 @@ import ga.negyahu.music.security.config.JwtSecurityConfig;
 import ga.negyahu.music.security.filter.JwtAuthenticationFilter;
 import ga.negyahu.music.security.handler.JwtAccessDeniedHandler;
 import ga.negyahu.music.security.handler.JwtAuthenticationEntryPoint;
-import ga.negyahu.music.security.utils.JwtTokenProvider;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.SecurityConfigurer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -23,6 +21,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
@@ -45,8 +44,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
             .antMatchers("/api/login").permitAll()
             .antMatchers("/api/accounts/*").permitAll()
-            .anyRequest()
-            .permitAll()
         ;
 
         http.sessionManagement()
@@ -56,18 +53,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authenticationEntryPoint(authenticationEntryPoint())
             .accessDeniedHandler(accessDeniedHandler());
 
-        http.csrf()
-            .disable();
+        // JWT 인증방식이라 필요없다.
+        http.csrf().disable();
 
-        http.httpBasic()
-            .disable()
-            ;
-//            .cors()
-//            .configurationSource(corsConfigurationSource());
+        // Exception Handling
+        http.exceptionHandling()
+            .authenticationEntryPoint(authenticationEntryPoint())
+            .accessDeniedHandler(accessDeniedHandler());
 
         http.apply(securityConfigurer());
-    }
 
+        http.authorizeRequests()
+            .requestMatchers(CorsUtils::isPreFlightRequest)
+            .permitAll();
+
+        http
+            .httpBasic().disable()
+            .cors();
+
+    }
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
@@ -79,6 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtSecurityConfig(
             jwtAuthenticationFilter, objectMapper, authenticationManagerBean(),
             authenticationSuccessHandler);
+        // ,corsConfigurationSource())
     }
 
     @Bean
@@ -90,20 +95,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // Security CORS 설정
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+        System.out.println("cors source");
 
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
+        final CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedMethods(List.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
     @Bean
-    public AccessDeniedHandler accessDeniedHandler(){
+    public AccessDeniedHandler accessDeniedHandler() {
         return new JwtAccessDeniedHandler();
     }
 }

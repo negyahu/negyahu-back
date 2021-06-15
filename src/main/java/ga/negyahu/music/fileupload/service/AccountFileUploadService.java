@@ -87,4 +87,12 @@ public class AccountFileUploadService implements FileUploadService, Initializing
         return getFileByFileFullName(this.filePath + fileName);
     }
 
+    @Override
+    public File getFileByAccountId(Long accountId) {
+        AccountFileUpload file = this.uploadRepository
+            .findFirstByAccount_Id(accountId);
+        String fullFilePath = file.getFullFilePath();
+        return getFileByFileFullName(fullFilePath);
+    }
+
 }

@@ -16,7 +16,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 public class WebConfig implements WebMvcConfigurer {
 
     @Bean
-    public SessionLocaleResolver localResolver(){
+    public SessionLocaleResolver localResolver() {
         SessionLocaleResolver localeResolver = new SessionLocaleResolver();
         localeResolver.setDefaultLocale(Locale.KOREA);
         return localeResolver;
@@ -25,15 +25,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOrigins("*")
-            .allowedMethods(
-                HttpMethod.GET.name(),
-                HttpMethod.HEAD.name(),
-                HttpMethod.POST.name(),
-                HttpMethod.PUT.name(),
-                HttpMethod.DELETE.name(),
-                HttpMethod.PATCH.name()
-            );
+            .allowedOriginPatterns("*")
+            .allowedMethods("*");
     }
 
     // Pageable
@@ -52,6 +45,5 @@ public class WebConfig implements WebMvcConfigurer {
         pageableArgumentResolver.setMaxPageSize(100);
         resolvers.add(pageableArgumentResolver);
     }
-
 
 }
