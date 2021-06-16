@@ -2,6 +2,7 @@ package ga.negyahu.music.account.repository;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.entity.State;
+import java.util.List;
 import java.util.Optional;
 import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,5 +32,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     void modifyState(@Param("id") Long id, @Param("state") State newState);
 
     boolean existsByNickname(String nickname);
+
+    List<Account> findAllByEmailIn(String[] emails);
 
 }

@@ -9,7 +9,11 @@ public interface AgencyService {
 
     Agency register(Agency agency);
 
-    Agency fetch(Long agencyId);
+    Agency fetchOwner(Long agencyId);
 
-    Agency fetch(Long agencyId, Account accountId);
+    Agency fetchOwner(Long agencyId, Account accountId);
+
+    Integer addManagers(Long id, Account user, String[] emails);
+
+
 }

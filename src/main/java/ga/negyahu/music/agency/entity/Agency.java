@@ -6,7 +6,9 @@ import ga.negyahu.music.artist.Artist;
 import ga.negyahu.music.artist.ArtistMember;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -36,11 +38,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "id")
-@Table(name= "agency" )
+@Table(name = "agency")
 @EntityListeners(AuditingEntityListener.class)
 public class Agency {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "agency_id")
     private Long id;
 
@@ -65,12 +68,12 @@ public class Agency {
 
     // 연관관계 맵핑
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_email_id")
+    @JoinColumn(name = "admin_id")
     private Account account;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "agency")
     @Builder.Default
-    private List<AgencyMember> agencyMembers = new ArrayList<>();
+    private Set<AgencyMember> agencyMembers = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "agency")
     @Builder.Default
@@ -80,4 +83,14 @@ public class Agency {
     @Builder.Default
     private List<ArtistMember> artistMembers = new ArrayList<>();
 
+    public void addMembers(Iterable<AgencyMember> agencyMembers) {
+        for (AgencyMember member : agencyMembers) {
+            this.agencyMembers.add(member);
+            member.setAgency(this);
+        }
+    }
+
+    public boolean isOwner(Account account){
+        return this.account.getId().equals(account.getId());
+    }
 }

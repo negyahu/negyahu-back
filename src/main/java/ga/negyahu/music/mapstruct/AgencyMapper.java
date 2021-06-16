@@ -1,6 +1,7 @@
 package ga.negyahu.music.mapstruct;
 
 import ga.negyahu.music.agency.dto.AgencyCreateDto;
+import ga.negyahu.music.agency.dto.AgencyDto;
 import ga.negyahu.music.agency.entity.Agency;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,5 +19,7 @@ public interface AgencyMapper {
     Agency from(AgencyCreateDto createDto);
 
 
+    @Mapping(source = "account.email" , target = "email")
+    AgencyDto toDto(Agency agency);
 
 }
