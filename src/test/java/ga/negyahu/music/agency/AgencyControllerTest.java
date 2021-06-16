@@ -1,6 +1,8 @@
 package ga.negyahu.music.agency;
 
+import static ga.negyahu.music.agency.AgencyController.ROOT_URL;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ga.negyahu.music.agency.dto.AgencyCreateDto;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 @CustomSpringBootTest
 @AutoConfigureMockMvc
@@ -30,9 +33,15 @@ public class AgencyControllerTest {
 
         AgencyCreateDto createDto = AgencyTestUtils.agencyCreateDto();
 
-        this.mockMvc.perform(post("/api/agency")
+        String content = objectMapper.writeValueAsString(createDto);
+
+        ResultActions perform = this.mockMvc.perform(post(ROOT_URL)
             .contentType(MediaType.APPLICATION_JSON)
+            .content(content)
         );
+
+        perform.andDo(print());
+
 
     }
 

@@ -17,30 +17,15 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
  * MailService 하나로 회원가입, 상품구매 내역 이메일 공통으로 사용하기 위해서
  * Argument
  * */
-@Profile("prod")
+@Profile("dev")
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class MailServiceImpl implements MailService {
-
-    private final JavaMailSender javaMailSender;
-    private final SpringTemplateEngine thymeleafTemplateEngine;
+public class MailServiceDev implements MailService {
 
     @Override
     public void send(ReceiverContext receiverContext) throws MessagingException {
 
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, StandardCharsets.UTF_8.name());
-        Context ctx = receiverContext.getContext();
-
-        receiverContext.setReceiver(helper);
-        String content = thymeleafTemplateEngine.process(receiverContext.getTemplatePath(), ctx);
-        helper.setText(content, true);
-        try {
-            javaMailSender.send(message);
-        } catch (MailException e) {
-            log.info("발송 실패");
-            throw e;
-        }
+        log.info("MailService is working!!");
     }
 }

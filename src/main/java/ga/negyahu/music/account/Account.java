@@ -121,7 +121,7 @@ public class Account implements FileUpload {
             this.state = State.ACTIVE;
         }
     }
-
+    
     @Override
     public Object getEntity() {
         return this;

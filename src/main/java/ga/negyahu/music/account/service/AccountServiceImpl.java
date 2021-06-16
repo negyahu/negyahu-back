@@ -3,7 +3,7 @@ package ga.negyahu.music.account.service;
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.account.repository.AccountRepository;
-import ga.negyahu.music.event.SignUpEvent;
+import ga.negyahu.music.event.account.SignUpEvent;
 import ga.negyahu.music.exception.AccountNotFoundException;
 import ga.negyahu.music.mapstruct.AccountMapper;
 import java.time.LocalDateTime;
@@ -27,8 +27,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private AccountMapper accountMapper = AccountMapper.INSTANCE;
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     @Override

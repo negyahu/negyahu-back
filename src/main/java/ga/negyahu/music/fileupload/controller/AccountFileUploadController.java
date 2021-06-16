@@ -67,4 +67,5 @@ public class AccountFileUploadController {
         IOUtils.toByteArray(accountImageFile.toURI());
         return ResponseEntity.ok(IOUtils.toByteArray(accountImageFile.toURI()));
     }
+
 }

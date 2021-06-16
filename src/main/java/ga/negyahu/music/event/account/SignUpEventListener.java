@@ -1,4 +1,4 @@
-package ga.negyahu.music.event;
+package ga.negyahu.music.event.account;
 
 import static java.util.Objects.isNull;
 

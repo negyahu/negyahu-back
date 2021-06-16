@@ -26,7 +26,6 @@ public class MessageDaoImpl implements MessageDao {
     @Override
     public Page<MessageDto> search(MessageSearch search, Pageable pageable) {
 
-        Long accountId = search.getAccountId();
         QueryResults<MessageDto> queryResults = query
             .select(new QMessageDto(
                 message.id,

@@ -1,4 +1,4 @@
-package ga.negyahu.music.event;
+package ga.negyahu.music.event.account;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.mail.template.SignUpMail;

@@ -8,9 +8,11 @@ import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.utils.DataJpaTestConfig;
 import ga.negyahu.music.utils.TestUtils;
+import java.util.List;
 import java.util.NoSuchElementException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -30,7 +32,7 @@ public class AccountRepositoryTest {
 
     @Description("Where절 추가, Account의 State가 Delete라면 조회하지 않는다.")
     @Test
-    public void 계정의상태_조건추가(){
+    public void 계정의상태_조건추가() {
         // given
         Account account = TestUtils.createDefaultAccount();
         Account save = this.accountRepository.save(account);
@@ -38,17 +40,18 @@ public class AccountRepositoryTest {
         // when : 조회하는 계정 상태는 활성화
         assertThrows(NoSuchElementException.class, () -> {
             this.accountRepository.findFirstByIdAndStateIsNot(save.getId(), State.ACTIVE).get();
-        },"현재 활성화인 계정을 제외하고 조회하기 때문에, 아무것도 찾지 못한다.");
+        }, "현재 활성화인 계정을 제외하고 조회하기 때문에, 아무것도 찾지 못한다.");
 
         // then
-        Account find = this.accountRepository.findFirstByIdAndStateIsNot(save.getId(), State.DELETED)
+        Account find = this.accountRepository
+            .findFirstByIdAndStateIsNot(save.getId(), State.DELETED)
             .get();
 
-        assertNotNull(find,"조회성공");
+        assertNotNull(find, "조회성공");
     }
 
     @Test
-    public void 계정상태_변경(){
+    public void 계정상태_변경() {
         // given
         Account account = TestUtils.createDefaultAccount();
         Account save = this.accountRepository.save(account);
@@ -59,7 +62,15 @@ public class AccountRepositoryTest {
 
         // then : 상태 활성 -> 삭제로 변경
         Account find = this.accountRepository.findFirstByEmail(account.getEmail()).get();
-        assertEquals(State.DELETED,find.getState(),"State active -> delete");
+        assertEquals(State.DELETED, find.getState(), "State active -> delete");
+    }
+
+    @Description("query 확인")
+    @Disabled
+    @Test
+    public void 해당되는_모든_이메일의_계정검색() {
+        String[] emails = new String[]{"aaaa", "bbbb"};
+        List<Account> allByEmailIn = this.accountRepository.findAllByEmailIn(emails);
     }
 
 }
