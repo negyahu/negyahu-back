@@ -31,7 +31,7 @@ public class AgencyDaoImpl implements AgencyDao {
 
         QueryResults<AgencyDto> results = query
             .select(new QAgencyDto(agency.id, agency.name, agency.nameEN, agency.businessNumber,
-                agency.ceoName, agency.mobile, agency.state, agency.signUpDate,
+                agency.bossName, agency.mobile, agency.state, agency.signUpDate,
                 agency.account.email))
             .from(agency)
             .join(agency.account, account)
@@ -56,8 +56,8 @@ public class AgencyDaoImpl implements AgencyDao {
                 return builder.and(agency.name.contains(search.getKeyword()));
             case "nameEn":
                 return builder.and(agency.nameEN.contains(search.getKeyword()));
-            case "ceoName":
-                return builder.and(agency.ceoName.contains(search.getKeyword()));
+            case "bossName":
+                return builder.and(agency.bossName.contains(search.getKeyword()));
             case "email":
                 return builder.and(agency.account.email.contains(search.getKeyword()));
             case "businessNumber":

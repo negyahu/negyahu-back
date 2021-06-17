@@ -12,14 +12,11 @@ public interface AgencyMapper {
 
     AgencyMapper INSTANCE = Mappers.getMapper(AgencyMapper.class);
 
-    @Mapping(source = "agentName", target = "name")
-    @Mapping(source = "agentNameEN", target = "nameEN")
-    @Mapping(source = "adminEmail", target = "account.email")
-    @Mapping(target = "state",constant = "WAIT")
+    @Mapping(source = "email", target = "account.email")
+    @Mapping(target = "state", constant = "WAIT")
     Agency from(AgencyCreateDto createDto);
 
-
-    @Mapping(source = "account.email" , target = "email")
+    @Mapping(source = "account.email", target = "email")
     AgencyDto toDto(Agency agency);
 
 }
