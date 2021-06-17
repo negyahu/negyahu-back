@@ -13,8 +13,6 @@ public class AccountUpdateDto {
 
     private String password;
 
-    private String username;
-
     private String mobile;
 
     private String nickname;

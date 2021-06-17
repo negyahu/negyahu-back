@@ -28,7 +28,6 @@ public class DataApplicationRunner implements ApplicationRunner {
             .email("test1@naver.com")
             .mobile("01011112222")
             .password(passwordEncoder.encode("dnwjd123"))
-            .nickname("킹우정")
             .certifiedEmail(true)
             .build();
         Account test2 = Account.builder()
@@ -36,7 +35,6 @@ public class DataApplicationRunner implements ApplicationRunner {
             .email("hyu630115@gmail.com")
             .mobile("01022223333")
             .password(passwordEncoder.encode("dbwjd123"))
-            .nickname("갓유정")
             .certifiedEmail(true)
             .build();
 

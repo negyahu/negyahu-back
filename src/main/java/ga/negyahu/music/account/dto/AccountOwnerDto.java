@@ -26,8 +26,6 @@ public class AccountOwnerDto {
 
     private String username;
 
-    private String nickname;
-
     private boolean isMemberShip;
 
     private Role role;

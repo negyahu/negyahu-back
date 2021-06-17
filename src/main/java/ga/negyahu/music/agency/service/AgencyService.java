@@ -16,4 +16,5 @@ public interface AgencyService {
     Integer addManagers(Long id, Account user, String[] emails);
 
 
+    boolean isManager(Long id, Long agencyMemberId);
 }

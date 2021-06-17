@@ -19,13 +19,6 @@ public class CheckController {
         return sendResult(exists);
     }
 
-    @GetMapping("/api/check/nickname")
-    public ResponseEntity checkDuplicateNickname(@RequestParam("nickname")String nickname){
-
-        boolean exists = this.accountRepository.existsByNickname(nickname);
-        return sendResult(exists);
-    }
-
     private ResponseEntity sendResult(boolean exists) {
         if (exists) {
             return ResponseEntity.badRequest().build();

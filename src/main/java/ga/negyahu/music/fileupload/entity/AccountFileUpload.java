@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
 @SuperBuilder
 public class AccountFileUpload extends BaseFileUpload {
 

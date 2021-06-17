@@ -65,9 +65,6 @@ public class Account implements FileUpload {
     @Column(length = 30)
     private String username;
 
-    @Column(length = 30)
-    private String nickname;
-
     private boolean isMemberShip;
 
     @Enumerated(EnumType.STRING)
@@ -121,7 +118,7 @@ public class Account implements FileUpload {
             this.state = State.ACTIVE;
         }
     }
-    
+
     @Override
     public Object getEntity() {
         return this;

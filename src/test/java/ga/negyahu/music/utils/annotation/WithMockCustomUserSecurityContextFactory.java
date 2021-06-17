@@ -68,8 +68,5 @@ public class WithMockCustomUserSecurityContextFactory implements
         if (!testUser.password().isEmpty()) {
             account.setPassword(passwordEncoder.encode(testUser.password()));
         }
-        if (!testUser.nickname().isEmpty()) {
-            account.setNickname(testUser.nickname());
-        }
     }
 }

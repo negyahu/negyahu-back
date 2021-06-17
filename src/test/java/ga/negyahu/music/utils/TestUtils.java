@@ -5,7 +5,6 @@ import ga.negyahu.music.account.dto.AccountCreateDto;
 import ga.negyahu.music.account.entity.Address;
 import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.service.AccountService;
-import ga.negyahu.music.message.Message;
 import ga.negyahu.music.security.AccountContext;
 import ga.negyahu.music.security.utils.JwtTokenProvider;
 import java.util.ArrayList;
@@ -44,7 +43,6 @@ public class TestUtils {
             .password(DEFAULT_PASSWORD)
             .mobile("01011112222")
             .username(DEFAULT_NAME)
-            .nickname(DEFAULT_NICKNAME)
             .role(Role.USER)
             .build();
     }
@@ -58,7 +56,6 @@ public class TestUtils {
                 .mobile(String.format("0101111%04d", i))
                 .password(DEFAULT_PASSWORD)
                 .username(DEFAULT_NAME)
-                .nickname(DEFAULT_NICKNAME + (i + 1))
                 .role(Role.USER)
                 .build();
             result.add(account);
@@ -71,7 +68,6 @@ public class TestUtils {
             .password(DEFAULT_PASSWORD)
             .email(DEFAULT_EMAIL)
             .username(DEFAULT_NAME)
-            .nickname(DEFAULT_NICKNAME)
             .build();
     }
 
@@ -104,11 +100,4 @@ public class TestUtils {
         return provider.createToken(authenticationToken);
     }
 
-    public static Message createMessage(String message, Account sender, Account receiver) {
-        return Message.builder()
-            .content(message)
-            .receiver(receiver)
-            .sender(sender)
-            .build();
-    }
 }

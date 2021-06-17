@@ -28,7 +28,6 @@ public class AdminAgencyController {
         @RequestParam
             AgencySearch search) {
         Page<AgencyDto> agencyDtos = agencyRepository.searchAgency(search, pageable);
-
         return ResponseEntity.ok(agencyDtos);
     }
 

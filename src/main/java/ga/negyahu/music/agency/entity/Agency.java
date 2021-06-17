@@ -53,7 +53,7 @@ public class Agency {
 
     private String businessNumber;
 
-    private String ceoName;
+    private String bossName;
 
     private String mobile;
 
@@ -90,7 +90,7 @@ public class Agency {
         }
     }
 
-    public boolean isOwner(Account account){
+    public boolean isOwner(Account account) {
         return this.account.getId().equals(account.getId());
     }
 }

@@ -25,13 +25,9 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     boolean existsByEmail(String email);
 
-    Account findFirstByEmailOrNickname(String email, String nickname);
-
     @Modifying(clearAutomatically = true)
     @Query("update Account as a set a.state = :state where a.id = :id")
     void modifyState(@Param("id") Long id, @Param("state") State newState);
-
-    boolean existsByNickname(String nickname);
 
     List<Account> findAllByEmailIn(String[] emails);
 

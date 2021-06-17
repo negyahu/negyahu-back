@@ -59,7 +59,7 @@ public class AgencyServiceImpl implements AgencyService {
         Account account = agency.getAccount();
         account.setRole(Role.AGENCY);
         account.setState(State.WAIT);
-        account.setUsername(agency.getCeoName());
+        account.setUsername(agency.getBossName());
         account.setPassword(this.passwordEncoder.encode(tempPassword));
         Account save = accountRepository.save(account);
         return save;
@@ -99,6 +99,12 @@ public class AgencyServiceImpl implements AgencyService {
         }
         List<AgencyMember> results = this.agencyMemberRepository.saveAll(agencyMembers);
         return results.size();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public boolean isManager(Long id, Long agencyMemberId) {
+        return this.agencyMemberRepository.existsByAgency_IdAndAccount_Id(id, agencyMemberId);
     }
 
 

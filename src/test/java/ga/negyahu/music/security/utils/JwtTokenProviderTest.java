@@ -54,7 +54,6 @@ public class JwtTokenProviderTest {
         Account account = context.getAccount();
 
         assertNotNull(this.account);
-        assertEquals(this.account.getNickname(), account.getNickname());
         assertEquals(this.account.getRole(), account.getRole());
     }
 

@@ -48,7 +48,6 @@ public class JwtTokenProvider {
             .setIssuer(HOST)
             .setAudience(account.getEmail())
             .claim(AUTHENTICATION_KEY, account.getRole().name())
-            .claim("nickname", account.getNickname())
             .claim("id", account.getId())
             .signWith(key, SignatureAlgorithm.HS512)
             .setExpiration(parseToDate())
@@ -78,7 +77,6 @@ public class JwtTokenProvider {
             .id(Long.valueOf(id))
             .role(role1)
             .email(email)
-            .nickname(nickname)
             .password("")
             .build();
 

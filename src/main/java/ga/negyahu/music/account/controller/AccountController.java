@@ -11,8 +11,6 @@ import ga.negyahu.music.account.service.AccountService;
 import ga.negyahu.music.exception.ResultMessage;
 import ga.negyahu.music.mapstruct.AccountMapper;
 import ga.negyahu.music.security.annotation.LoginUser;
-import ga.negyahu.music.validator.AccountCreateDtoValidator;
-import ga.negyahu.music.validator.AccountUpdateDtoValidator;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -38,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@ApiOperation(value = "/api/accounts", tags = "AccountController API")
+@ApiOperation(value = "/api/accounts", tags = "Account API")
 @RestController
 @RequestMapping(value = ROOT_URI)
 @RequiredArgsConstructor
@@ -48,19 +46,7 @@ public class AccountController {
     public final AccountMapper accountMapper = AccountMapper.INSTANCE;
 
     private final AccountService accountService;
-    private final AccountCreateDtoValidator createDtoValidator;
-    private final AccountUpdateDtoValidator updateDtoValidator;
 
-    @InitBinder("accountCreateDto")
-    public void binder(WebDataBinder webDataBinder) {
-        webDataBinder.addValidators(createDtoValidator);
-    }
-
-    @ApiOperation(value = "회원가입 예제", notes = "회원가입 예제입니다")
-    @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "계정생성 성공", response = AccountDto.class),
-        @ApiResponse(code = 400, message = "계정생성 실패", response = AccountDto.class)
-    })
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity create(@RequestBody @Valid AccountCreateDto accountCreateDto,
@@ -77,7 +63,7 @@ public class AccountController {
     }
 
     @GetMapping(value = "/{id}")
-    @ApiParam(name = "id", example = "1", value = "조회할 회원의 고유번호", required = true, type = "path")
+//    @ApiParam(name = "id", example = "1", value = "조회할 회원의 고유번호", required = true, type = "path")
     public ResponseEntity fetch(@PathVariable Long id, @LoginUser Account loginUser) {
         Account account = this.accountService.fetch(id);
 
@@ -97,8 +83,7 @@ public class AccountController {
         if (Objects.isNull(loginUser) || !Objects.equals(loginUser.getId(), id)) {
             return ResponseEntity.status(403).build();
         }
-        // Form validation
-        updateDtoValidator.validate(accountDto, errors);
+
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().body(errors);
         }

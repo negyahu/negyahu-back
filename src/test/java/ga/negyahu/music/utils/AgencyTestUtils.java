@@ -10,10 +10,10 @@ public class AgencyTestUtils {
 
     public static AgencyCreateDto agencyCreateDto() {
         return AgencyCreateDto.builder()
-            .agentName("빅히트")
-            .agentNameEN("BIGHIT")
-            .adminEmail("yangfriendship.dev@gmail.com")
-            .ceoName("김덕배")
+            .nameEN("빅히트")
+            .name("BIGHIT")
+            .email("yangfriendship.dev@gmail.com")
+            .bossName("김덕배")
             .businessNumber("본적이없어예시도못들겠네")
             .mobile("01011112222")
             .build();
@@ -24,7 +24,7 @@ public class AgencyTestUtils {
             .name("빅히트")
             .nameEN("BIGHIT")
             .account(account)
-            .ceoName("김덕배")
+            .bossName("김덕배")
             .businessNumber("본적이없어예시도못들겠네")
             .mobile("01011112222")
             .build();

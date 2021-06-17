@@ -18,12 +18,12 @@ public class AgencyMapperTest {
 
         Agency entity = mapper.from(dto);
 
-        assertEquals(dto.getAgentName(), entity.getName());
-        assertEquals(dto.getAgentNameEN(), entity.getNameEN());
+        assertEquals(dto.getName(), entity.getName());
         assertEquals(dto.getBusinessNumber(), entity.getBusinessNumber());
         assertEquals(dto.getMobile(), entity.getMobile());
-        assertEquals(dto.getCeoName(), entity.getCeoName());
+        assertEquals(dto.getBossName(), entity.getBossName());
         assertEquals(State.WAIT, entity.getState());
+        assertEquals(dto.getNameEN(), entity.getNameEN());
     }
 
 }

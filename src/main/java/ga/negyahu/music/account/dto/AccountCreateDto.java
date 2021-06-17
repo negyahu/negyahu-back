@@ -28,9 +28,6 @@ public class AccountCreateDto implements Serializable {
     @ApiModelProperty(notes = "회원 실명",name = "username", value = "양우정",example = "양우정")
     private String username;
 
-    @ApiModelProperty(notes = "회원 닉네임",name = "nickname", value = "킹우정",example = "킹우정")
-    private String nickname;
-
     @Size(min = 13,max = 14)
     @ApiModelProperty(notes = "회원 연락처",name = "mobile", value = "010-1111-2222",example = "010-1111-2222")
     private String mobile;
