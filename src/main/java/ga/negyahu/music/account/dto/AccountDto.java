@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Example;
 import io.swagger.annotations.ExampleProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,29 +20,28 @@ import org.springframework.http.MediaType;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ApiModel("Account DTO")
+@Schema(description = "사용자 DTO")
 public class AccountDto {
 
-    @ApiModelProperty(name = "id", value = "3201", notes = "계정의 고유번호")
-
+    @Schema(defaultValue = "1", example = "1", description = "사용자 계정 고유번호")
     private Long id;
 
-    @ApiModelProperty(name = "email", value = "useremail@email.com", notes = "회원 이메일, 로그인시 사용")
+    @Schema(defaultValue = "youzheng@gmail.com", example = "youzheng@gmail.com", description = "사용자 이메일, 로그인시 사용")
     private String email;
 
-    @ApiModelProperty(name = "username", value = "김창현", notes = "회원실명")
+    @Schema(defaultValue = "양우정", example = "양우정", description = "사용자 실명")
     private String username;
 
-    @ApiModelProperty(name = "country", value = "KO-KR", notes = "회원의 국적")
+    @Schema( defaultValue = "KO-KR",example = "KO-KR" ,description = "사용자 국가")
     private String country;
 
-    @ApiModelProperty(name = "signUpDate", value = "KO-KR", notes = "계정 생성일")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+    @Schema( defaultValue = "2021-01-01",example = "2021-01-01" ,description = "가입일")
     private LocalDate signUpDate;
 
-    @ApiModelProperty(name = "area", value = "KO-KR", notes = "계정 생성일")
-    private Area area;
+//    @ApiModelProperty(name = "area", value = "KO-KR", notes = "계정 생성일")
+//    private Area area;
 
-    @ApiModelProperty(name = "areaCertify", value = "KO-KR", notes = "계정 생성일")
-    private boolean areaCertify;
+//    @ApiModelProperty(name = "areaCertify", value = "KO-KR", notes = "계정 생성일")
+//    private boolean areaCertify;
 }

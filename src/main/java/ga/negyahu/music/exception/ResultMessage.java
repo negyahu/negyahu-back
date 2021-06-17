@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @Schema(description = "요청 결과 메세지")
 public class ResultMessage {
 
-    @Schema(description = "요청에 대한 결과", defaultValue = "FAIL")
+    @Schema(description = "요청에 대한 결과", defaultValue = "Success or Fail", example = "Success or Fail")
     private Result result;
 
-    @Schema(description = "메세지", defaultValue = "메세지")
+    @Schema(description = "메세지", defaultValue = "결과에 대한 상세 메세지", example = "Detail message")
     private String message;
 
     public static final ResultMessage createFailMessage(String message) {

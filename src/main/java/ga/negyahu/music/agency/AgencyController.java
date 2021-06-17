@@ -8,9 +8,12 @@ import ga.negyahu.music.agency.dto.AgencyDto;
 import ga.negyahu.music.agency.dto.ManagerDto;
 import ga.negyahu.music.agency.entity.Agency;
 import ga.negyahu.music.agency.service.AgencyService;
+import ga.negyahu.music.exception.Result;
 import ga.negyahu.music.exception.ResultMessage;
 import ga.negyahu.music.mapstruct.AgencyMapper;
 import ga.negyahu.music.security.annotation.LoginUser;
+import ga.negyahu.music.swagger.annotation.AgencyIDParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -74,6 +77,17 @@ public class AgencyController {
     /*
      * 소속사 개별조회
      * */
+    @ApiOperation(value = "소속사 개별 조회", notes = "소속사 개별 조회")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "소속사 조회 성공"
+            , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(name = "AgencyDto", implementation = AgencyDto.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "소속사 조회 실패"
+            , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ResultMessage.class))
+        )
+    })
+    @ResponseStatus(value = HttpStatus.OK)
+    @AgencyIDParam
     @GetMapping("/{agencyId}")
     public ResponseEntity fetch(@LoginUser Account user, @PathVariable("agencyId") Long agencyId) {
         Agency agency = agencyService.fetchOwner(agencyId);
@@ -99,6 +113,17 @@ public class AgencyController {
     /*
      * Agency Member
      */
+    @ApiOperation(value = "소속사 직원 등록", notes = "소속사 직원 등록")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "직원 등록 성공"
+            , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(name = "AgencyDto", implementation = ManagerDto.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "직원 등록 실패"
+            , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ResultMessage.class))
+        )
+    })
+    @ResponseStatus(value = HttpStatus.OK)
+    @AgencyIDParam
     @PostMapping("/{agencyId}/manager")
     public ResponseEntity addManagers(@PathVariable("agencyId") Long id,
         @RequestBody ManagerDto managerDto, @LoginUser Account user) {
@@ -121,6 +146,11 @@ public class AgencyController {
         @PathVariable("agencyMemberId") Long agencyMemberId, @LoginUser Account user) {
 
         boolean result = this.agencyService.isManager(id, agencyMemberId);
+        if (!result) {
+            ResultMessage resultMessage = ResultMessage.builder().message("[ERROR] 접근할 수 없습니다.")
+                .result(Result.FAIL).build();
+            return ResponseEntity.status(403).body(resultMessage);
+        }
 
         return ResponseEntity.ok().build();
     }

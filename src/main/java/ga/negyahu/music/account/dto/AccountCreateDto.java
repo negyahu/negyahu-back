@@ -2,6 +2,7 @@ package ga.negyahu.music.account.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -15,21 +16,20 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel("Account Create DTO")
+@Schema(defaultValue = "계정 생성 DTO")
 public class AccountCreateDto implements Serializable {
 
-    @ApiModelProperty(notes = "사용자 이메일, 로그인시 사용됩니다.",name = "email", value = "useremail@email.com"
-        ,example = "youzheng@gmail.com")
+    @Schema(defaultValue = "youzheng@gmail.com", example = "youzheng@gmail.com", description = "사용자 이메일, 로그인시 사용")
     private String email;
 
-    @ApiModelProperty(notes = "사용자 패스워드",name = "password", value = "우정007@@",example = "우정007@@")
+    @Schema(defaultValue = "password@@", example = "password@@", description = "패스워드")
     private String password;
 
-    @ApiModelProperty(notes = "회원 실명",name = "username", value = "양우정",example = "양우정")
+    @Schema(defaultValue = "양우정", example = "양우정", description = "사용자 실명")
     private String username;
 
-    @Size(min = 13,max = 14)
-    @ApiModelProperty(notes = "회원 연락처",name = "mobile", value = "010-1111-2222",example = "010-1111-2222")
+    @Size(min = 13, max = 14)
+    @Schema(defaultValue = "010-1111-2222", example = "010-1111-2222", description = "사용자 연락처")
     private String mobile;
 
 }

@@ -3,11 +3,16 @@ package ga.negyahu.music.config;
 import static springfox.documentation.schema.AlternateTypeRules.newRule;
 
 import com.fasterxml.classmate.TypeResolver;
+import ga.negyahu.music.account.dto.AccountCreateDto;
+import ga.negyahu.music.account.dto.AccountDto;
 import ga.negyahu.music.agency.dto.AgencyDto;
+import ga.negyahu.music.agency.dto.AgencySearch;
+import ga.negyahu.music.agency.dto.ManagerDto;
 import ga.negyahu.music.exception.ResultMessage;
 import ga.negyahu.music.security.annotation.LoginUser;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -20,6 +25,7 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.data.rest.configuration.SpringDataRestConfiguration;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -36,11 +42,16 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.OAS_30)
             .additionalModels(
                 typeResolver.resolve(AgencyDto.class),
-                typeResolver.resolve(ResultMessage.class)
+                typeResolver.resolve(ResultMessage.class),
+                typeResolver.resolve(AccountDto.class),
+                typeResolver.resolve(AccountCreateDto.class),
+                typeResolver.resolve(AgencySearch.class),
+                typeResolver.resolve(ManagerDto.class)
             )
             .apiInfo(apiInfo())
             .ignoredParameterTypes(Errors.class, LoginUser.class)
             .useDefaultResponseMessages(false)
+            .securitySchemes(Arrays.asList(apiKey()))
             .select()
             .apis(RequestHandlerSelectors.basePackage("ga.negyahu.music"))
             .paths(PathSelectors.any()).build()
@@ -54,6 +65,10 @@ public class SwaggerConfig {
             .version("1.0")
             .description("Fantimate 서버 API 문서")
             .build();
+    }
+
+    private ApiKey apiKey() {
+        return new ApiKey("token", "Authorization", "header");
     }
 
 }
