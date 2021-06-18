@@ -37,7 +37,7 @@ public class AgencyRegisterMail implements ReceiverContext {
 
         Context context = new Context();
         context.setVariable("agencyName", this.agency.getName());
-        context.setVariable("rawPassword", this.rawPassword);
+        context.setVariable("tempPassword", this.rawPassword);
         return context;
     }
 

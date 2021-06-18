@@ -108,6 +108,17 @@ public class AgencyServiceImpl implements AgencyService {
         return this.agencyMemberRepository.existsByAgency_IdAndAccount_Id(id, agencyMemberId);
     }
 
+    @Override
+    public void permit(Account admin, Long id) {
+        if (admin.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException("[ERROR] 접근할 수 없습니다.}");
+        }
+        Agency agency = findByIdElseThrow(id);
+        agency.setState(State.ACTIVE);
+        Account boss = agency.getAccount();
+        boss.setState(State.ACTIVE);
+    }
+
 
     private void checkOwner(Agency agency, Account account) {
         if (!agency.isOwner(account)) {

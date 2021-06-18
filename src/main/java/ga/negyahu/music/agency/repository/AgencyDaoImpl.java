@@ -60,7 +60,7 @@ public class AgencyDaoImpl implements AgencyDao {
                 return builder.and(agency.bossName.contains(search.getKeyword()));
             case "email":
                 return builder.and(agency.account.email.contains(search.getKeyword()));
-            case "businessNumber":
+            case "businessnumber":
                 return builder.and(agency.businessNumber.contains(search.getKeyword()));
             case "state":
                 String keyword = search.getKeyword();

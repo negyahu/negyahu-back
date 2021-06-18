@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Locale;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.SortHandlerMethodArgumentResolver;
 import org.springframework.http.HttpMethod;
@@ -14,6 +16,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
 
     @Bean
     public SessionLocaleResolver localResolver() {
@@ -32,17 +35,18 @@ public class WebConfig implements WebMvcConfigurer {
     // Pageable
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        final Pageable DEFAULT_PAGEABLE = PageRequest.of(0, 20);
 
         SortHandlerMethodArgumentResolver sortArgumentResolver = new SortHandlerMethodArgumentResolver();
 
         PageableHandlerMethodArgumentResolver pageableArgumentResolver =
-            new PageableHandlerMethodArgumentResolver(
-                sortArgumentResolver);
+            new PageableHandlerMethodArgumentResolver(sortArgumentResolver);
 
-        pageableArgumentResolver.setOneIndexedParameters(true);
+        pageableArgumentResolver.setOneIndexedParameters(true); // 페이지인덱스를 클라이언트가 1부터 인식하도록
         pageableArgumentResolver.setPageParameterName("p");
         pageableArgumentResolver.setSizeParameterName("s");
         pageableArgumentResolver.setMaxPageSize(100);
+        pageableArgumentResolver.setFallbackPageable(DEFAULT_PAGEABLE);
         resolvers.add(pageableArgumentResolver);
     }
 
