@@ -59,6 +59,7 @@ public class AgencyServiceImpl implements AgencyService {
         Account account = agency.getAccount();
         account.setRole(Role.AGENCY);
         account.setState(State.WAIT);
+        account.setMobile(agency.getMobile());
         account.setUsername(agency.getBossName());
         account.setPassword(this.passwordEncoder.encode(tempPassword));
         Account save = accountRepository.save(account);
@@ -85,7 +86,7 @@ public class AgencyServiceImpl implements AgencyService {
     @Override
     public Integer addManagers(Long id, Account user, String[] emails) {
         Agency agency = findByIdElseThrow(id);
-//        checkOwner(agency, user);
+        checkOwner(agency, user);
 
         List<Account> accounts = this.accountRepository.findAllByEmailIn(emails);
         Set<AgencyMember> agencyMembers = new HashSet<>();
@@ -108,8 +109,8 @@ public class AgencyServiceImpl implements AgencyService {
     }
 
 
-    private void checkOwner(Agency agency, Account user) {
-        if (!agency.isOwner(user)) {
+    private void checkOwner(Agency agency, Account account) {
+        if (!agency.isOwner(account)) {
             throw new AccessDeniedException("[ERROR] 접근할 수 없습니다.");
         }
     }

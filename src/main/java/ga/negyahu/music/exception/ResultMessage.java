@@ -26,6 +26,13 @@ public class ResultMessage {
             .build();
     }
 
+    public static final ResultMessage create403Message() {
+        return ResultMessage.builder()
+            .result(Result.FAIL)
+            .message("[ERROR] 접근할 수 없습니다.")
+            .build();
+    }
+
     public static final ResultMessage createSuccessMessage(String message) {
         return ResultMessage.builder()
             .result(Result.SUCCESS)

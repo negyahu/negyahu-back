@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @Schema(defaultValue = "소속사에 등록할 사용자계정의 고유번호")
 public class ManagerDto {
 
-    @Schema(defaultValue = "계정 고유번호 배열", example = "[1,2,3]", description = "소속사에 등록할 사용자계정의 고유번호")
+    @Schema(defaultValue = "계정 이메일 (배열)", example = "[1,2,3]", description = "소속사에 등록할 계정의 이메일")
     private String[] emails;
 }

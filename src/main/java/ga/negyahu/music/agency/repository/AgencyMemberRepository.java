@@ -15,6 +15,8 @@ public interface AgencyMemberRepository extends JpaRepository<AgencyMember, Long
     @Query("select am from AgencyMember am where am.agency.id = :agencyId and am.account.id = :accountId")
     AgencyMember findByAgencyAndAccountId(Long agencyId, Long accountId);
 
+    List<AgencyMember> findAllByAgencyId(Long agencyId);
+
     boolean existsByAgency_IdAndAccount_Id(Long agencyId, Long accountId);
 
 }

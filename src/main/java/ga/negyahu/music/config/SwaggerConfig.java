@@ -10,20 +10,25 @@ import ga.negyahu.music.agency.dto.AgencySearch;
 import ga.negyahu.music.agency.dto.ManagerDto;
 import ga.negyahu.music.exception.ResultMessage;
 import ga.negyahu.music.security.annotation.LoginUser;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.AlternateTypeRule;
+import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.spi.DocumentationType;
@@ -48,6 +53,10 @@ public class SwaggerConfig {
                 typeResolver.resolve(AgencySearch.class),
                 typeResolver.resolve(ManagerDto.class)
             )
+            .alternateTypeRules(
+                AlternateTypeRules
+                    .newRule(typeResolver.resolve(Pageable.class), typeResolver.resolve(Page.class))
+            )
             .apiInfo(apiInfo())
             .ignoredParameterTypes(Errors.class, LoginUser.class)
             .useDefaultResponseMessages(false)
@@ -70,5 +79,19 @@ public class SwaggerConfig {
     private ApiKey apiKey() {
         return new ApiKey("token", "Authorization", "header");
     }
+
+    @Schema(description = "페이징 처리를 위한 데이터")
+    static class Page {
+
+        @Schema(description = "페이지 번호(0..N)",defaultValue = "1")
+        private Integer p;
+
+        @Schema(description = "페이지 크기", allowableValues = "range[0, 100]",defaultValue = "10")
+        private Integer s;
+
+        @Schema(description = "정렬방식 ex): 정렬기준 ,ASC | DESC", defaultValue = "[]")
+        private List<String> sort;
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package ga.negyahu.music.agency.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,8 +39,9 @@ public class AgencyCreateDto {
         , example = "youzheng.ent@gmail.com")
     private String email;
 
+    @Nullable
     @Schema(defaultValue = "[3,5,6,3]", description = "file upload를 통해 등록한 후 반환된 고유번호"
-        , example = "[3,5,6,3]")
+        , allowableValues = {"1", "2", "3", "4"}, type = "array", subTypes = Long.class)
     private Long[] fileIds;
 
 }

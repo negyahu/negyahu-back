@@ -254,7 +254,6 @@ public class AccountControllerTest {
 
     private AccountUpdateDto crateUpdateDto() {
         return AccountUpdateDto.builder()
-            .nickname("정우양")
             .password("dnwjd123@@@@")
             .mobile("01033334444")
             .build();

@@ -3,6 +3,7 @@ package ga.negyahu.music.agency;
 import static ga.negyahu.music.agency.AgencyController.ROOT_URL;
 
 import ga.negyahu.music.account.Account;
+import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.agency.dto.AgencyCreateDto;
 import ga.negyahu.music.agency.dto.AgencyDto;
 import ga.negyahu.music.agency.dto.ManagerDto;
@@ -40,8 +41,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@ApiOperation(value = "/api/agency", tags = "Agency API")
-@OpenAPIDefinition()
+@ApiOperation(value = "/api/agency", tags = "소속사 API")
 @RestController
 @RequestMapping(value = ROOT_URL)
 @RequiredArgsConstructor
@@ -88,8 +88,8 @@ public class AgencyController {
     })
     @ResponseStatus(value = HttpStatus.OK)
     @AgencyIDParam
-    @GetMapping("/{agencyId}")
-    public ResponseEntity fetch(@LoginUser Account user, @PathVariable("agencyId") Long agencyId) {
+    @GetMapping("/{id}")
+    public ResponseEntity fetch(@LoginUser Account user, @PathVariable("id") Long agencyId) {
         Agency agency = agencyService.fetchOwner(agencyId);
         Account account = agency.getAccount();
         AgencyDto dto = mapper.toDto(agency);
@@ -113,7 +113,7 @@ public class AgencyController {
     /*
      * Agency Member
      */
-    @ApiOperation(value = "소속사 직원 등록", notes = "소속사 직원 등록")
+    @ApiOperation(value = "소속사 직원 등록", notes = "사이트에 가입한 회원을 조회한 후, 등록한다. 등록할 계정의 고유번호를 받는다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "직원 등록 성공"
             , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(name = "AgencyDto", implementation = ManagerDto.class))
@@ -127,6 +127,10 @@ public class AgencyController {
     @PostMapping("/{agencyId}/manager")
     public ResponseEntity addManagers(@PathVariable("agencyId") Long id,
         @RequestBody ManagerDto managerDto, @LoginUser Account user) {
+        if (user.getRole() != Role.AGENCY) {
+            return ResponseEntity.status(403).body(ResultMessage.create403Message());
+        }
+
         String[] emails = managerDto.getEmails();
         //TODO SQLIntegrityConstraintViolationException 동일한 계정을 추가할 발생, Transactional 확인 후 예외처리 필수!
         Integer addedCount = this.agencyService.addManagers(id, user, emails);
