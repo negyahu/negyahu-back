@@ -8,7 +8,6 @@ import ga.negyahu.music.fileupload.entity.FileUpload;
 import ga.negyahu.music.fileupload.repository.AccountFileUploadRepository;
 import ga.negyahu.music.fileupload.util.FileUploadUtil;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,21 +55,31 @@ public class AccountFileUploadService implements FileUploadService, Initializing
     @Transactional(rollbackFor = {Exception.class})
     @Override
     public BaseFileUpload saveFile(MultipartFile multipartFile, FileUpload fileUpload) {
-
         try {
-            BaseFileUpload baseFileUpload = new BaseFileUpload(multipartFile, this.filePath);
             Account account = (Account) fileUpload.getEntity();
-            AccountFileUpload accountFileUpload = new AccountFileUpload();
-            accountFileUpload.setAccount(account);
-            accountFileUpload.setBaseFileUpload(baseFileUpload);
-            uploadRepository.save(accountFileUpload);
+            AccountFileUpload upload = existImage(account.getId());
+            if (upload == null) {
+                upload = new AccountFileUpload(multipartFile, this.filePath, account);
+                upload.setAccount(account);
+                upload.setBaseFileUpload(upload);
+                uploadRepository.save(upload);
+            } else {
+                String filePath = upload.getFullFilePath();
+                upload.setNewMultipartFile(multipartFile);
+                File file = new File(filePath);
+                file.delete();
+            }
 
-            File file = new File(accountFileUpload.getFullFilePath());
+            File file = new File(upload.getFullFilePath());
             multipartFile.transferTo(file);
-            return accountFileUpload;
+            return upload;
         } catch (IOException e) {
             throw new FileUploadException("[ERROR] 파일 업로드에 실패했습니다.");
         }
+    }
+
+    private AccountFileUpload existImage(Long accountId) {
+        return this.uploadRepository.findFirstByAccountId(accountId);
     }
 
     @Override
@@ -88,9 +97,9 @@ public class AccountFileUploadService implements FileUploadService, Initializing
     }
 
     @Override
-    public File getFileByAccountId(Long accountId) {
+    public File getFileByOwnerId(Long accountId) {
         AccountFileUpload file = this.uploadRepository
-            .findFirstByAccount_Id(accountId);
+            .findFirstByAccountId(accountId);
         String fullFilePath = file.getFullFilePath();
         return getFileByFileFullName(fullFilePath);
     }

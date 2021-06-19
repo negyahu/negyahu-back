@@ -21,10 +21,15 @@ import org.springframework.web.multipart.MultipartFile;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
 public class AccountFileUpload extends BaseFileUpload {
+
+    public AccountFileUpload(MultipartFile file, String filePath, Account account) {
+        super(file, filePath);
+        this.account = account;
+        createFileName();
+    }
 
     @Id
     @GeneratedValue
@@ -35,4 +40,10 @@ public class AccountFileUpload extends BaseFileUpload {
     @JoinColumn(name = "account_id")
     private Account account;
 
+    @Override
+    public void createFileName() {
+//        String[] split = getOriginalName().split("\\.");
+//        String fileType = split[split.length - 1];
+        super.setFileName(account.getId() + "." + "png");
+    }
 }

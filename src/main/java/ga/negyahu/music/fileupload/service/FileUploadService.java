@@ -16,5 +16,7 @@ public interface FileUploadService {
 
     File getFileByFileName(String fileName);
 
-    File getFileByAccountId(Long accountId);
+    File getFileByOwnerId(Long accountId);
+
+    String getFilePath();
 }

@@ -30,18 +30,25 @@ public class BaseFileUpload {
 
     public BaseFileUpload(MultipartFile multipartFile, String filePath) {
         this.originalName = multipartFile.getOriginalFilename();
-        this.fileName = createFileName(this.originalName);
         this.filePath = filePath;
         this.size = multipartFile.getSize();
         this.contentType = multipartFile.getContentType();
+    }
+
+    public void setNewMultipartFile(MultipartFile multipartFile) {
+        this.originalName = multipartFile.getOriginalFilename();
+        this.filePath = filePath;
+        this.size = multipartFile.getSize();
+        this.contentType = multipartFile.getContentType();
+        createFileName();
     }
 
     public String getFullFilePath() {
         return this.filePath + this.fileName;
     }
 
-    private static String createFileName(String originalName) {
-        return UUID.randomUUID().toString() + "." + originalName;
+    public void createFileName() {
+        this.fileName = UUID.randomUUID().toString() + "." + this.originalName;
     }
 
     public void setBaseFileUpload(BaseFileUpload fileUpload) {

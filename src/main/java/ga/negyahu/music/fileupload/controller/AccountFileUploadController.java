@@ -1,25 +1,22 @@
 package ga.negyahu.music.fileupload.controller;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import ga.negyahu.music.account.Account;
-import ga.negyahu.music.fileupload.entity.AccountFileUpload;
+import ga.negyahu.music.exception.ResultMessage;
 import ga.negyahu.music.fileupload.entity.BaseFileUpload;
 import ga.negyahu.music.fileupload.service.FileUploadService;
 import ga.negyahu.music.fileupload.util.FileUploadUtil;
 import ga.negyahu.music.security.annotation.LoginUser;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.UUID;
-import javax.imageio.ImageIO;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -32,40 +29,89 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-public class AccountFileUploadController {
+public class AccountFileUploadController implements InitializingBean {
 
     @Qualifier("accountFileUploadService")
-    private final FileUploadService fileUploadService;
+    private final FileUploadService accountFileUploadService;
+    private final FileUploadUtil uploadUtil;
 
-    public static final String ACCOUNT_FILE_URL = "/api/accounts/{id}/upload";
+    public static final String ACCOUNT_FILE_URL = "/api/accounts/{id}/image";
+    public static final String DEFAULT_FORMAT = "png";
+    private String filePath;
 
 
-    /*
-     * account 개인이미지 업로
-     * */
-    @PostMapping(value = ACCOUNT_FILE_URL
-        , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        filePath = this.accountFileUploadService.getFilePath();
+    }
+
+    @PostMapping(value = ACCOUNT_FILE_URL)
     public ResponseEntity uploadImage(@RequestParam("file") MultipartFile multipartFile, @LoginUser
         Account user, @PathVariable("id") Long accountId) throws IOException {
+        if (!isImageType(multipartFile)) {
+            ResultMessage message = ResultMessage
+                .createFailMessage("[ERROR] 이미지 파일만 업로드할 수 있습니다.");
+            return ResponseEntity.badRequest().body(message);
+        }
         if (!user.getId().equals(accountId)) {
             throw new AccessDeniedException("[ERROR] 접근할 수 없습니다.");
         }
-        BaseFileUpload baseFileUpload = this.fileUploadService.saveFile(multipartFile, user);
+        BaseFileUpload baseFileUpload = this.accountFileUploadService.saveFile(multipartFile, user);
 
         URI uri = linkTo(methodOn(AccountFileUploadController.class).loadImage(accountId)).toUri();
-        return ResponseEntity.created(uri).build();
+
+        return ResponseEntity.created(uri).body(baseFileUpload.getFullFilePath());
+    }
+
+    public boolean isImageType(MultipartFile file) {
+        String type = file.getContentType();
+        return type.equals(MediaType.IMAGE_PNG_VALUE) || type.equals(MediaType.IMAGE_JPEG_VALUE);
     }
 
     /*
      * account 개인이미지 로드
      * */
-    @GetMapping(value = ACCOUNT_FILE_URL
-        , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity loadImage(@PathVariable("accountId") Long accountId)
+    @GetMapping(value = ACCOUNT_FILE_URL)
+    public ResponseEntity loadImage(@PathVariable("id") Long accountId)
         throws IOException {
-        File accountImageFile = this.fileUploadService.getFileByAccountId(accountId);
-        IOUtils.toByteArray(accountImageFile.toURI());
-        return ResponseEntity.ok(IOUtils.toByteArray(accountImageFile.toURI()));
+
+        File file = new File(this.filePath + accountId + "." + DEFAULT_FORMAT);
+        if (!file.exists()) {
+            return ResponseEntity.badRequest()
+                .body(ResultMessage.createFailMessage("[ERROR] 존재하지 않는 이미지입니다."));
+        }
+
+        IOUtils.toByteArray(file.toURI());
+        return ResponseEntity
+            .ok()
+            .contentType(MediaType.IMAGE_PNG)
+            .body(IOUtils.toByteArray(file.toURI()))
+            ;
     }
+
+    @GetMapping(value = {ACCOUNT_FILE_URL + "/{width}/{height}", ACCOUNT_FILE_URL + "/{width}"})
+    public ResponseEntity loadImageResizing(@PathVariable("id") Long accountId,
+        @PathVariable("width") Integer width,
+        @PathVariable(value = "height", required = false) Integer height)
+        throws IOException {
+        if (height == null || height.equals(0)) {
+            height = width;
+        }
+
+        File file = new File(this.filePath + accountId + "." + DEFAULT_FORMAT);
+        if (!file.exists()) {
+            return ResponseEntity.badRequest()
+                .body(ResultMessage.createFailMessage("[ERROR] 존재하지 않는 이미지입니다."));
+        }
+
+        ByteArrayOutputStream byteArrayOutputStream = this.uploadUtil.resizingImage(width, height,
+            file);
+        return ResponseEntity
+            .ok()
+            .contentType(MediaType.IMAGE_PNG)
+            .body(byteArrayOutputStream.toByteArray())
+            ;
+    }
+
 
 }

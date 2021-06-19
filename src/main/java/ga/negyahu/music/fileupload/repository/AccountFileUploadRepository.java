@@ -7,6 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface AccountFileUploadRepository extends JpaRepository<AccountFileUpload, Long> {
 
     @Transactional(readOnly = true)
-    AccountFileUpload findFirstByAccount_Id(Long acountId);
+    AccountFileUpload findFirstByAccountId(Long accountId);
 
 }
