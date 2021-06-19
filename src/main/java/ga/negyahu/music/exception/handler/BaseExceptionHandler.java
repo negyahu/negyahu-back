@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import ga.negyahu.music.exception.AccountNotFoundException;
 import ga.negyahu.music.exception.AreaNotFountException;
 import ga.negyahu.music.exception.BadMessageRequestException;
+import ga.negyahu.music.exception.FileNotFoundException;
 import ga.negyahu.music.exception.FileUploadException;
 import ga.negyahu.music.exception.MessageAlreadyOpenException;
 import ga.negyahu.music.exception.MessageNotFoundException;
@@ -61,6 +62,11 @@ public class BaseExceptionHandler {
     public ResponseEntity fileUploadExceptionHandler(FileUploadException e) {
         ResultMessage failMessage = ResultMessage.createFailMessage(e.getMessage());
         return ResponseEntity.badRequest().body(failMessage);
+    }
+
+    @ExceptionHandler(value = FileNotFoundException.class)
+    public ResponseEntity fileNotFoundExceptionExceptionHandler(FileNotFoundException e) {
+        return ResponseEntity.notFound().build();
     }
 
 }

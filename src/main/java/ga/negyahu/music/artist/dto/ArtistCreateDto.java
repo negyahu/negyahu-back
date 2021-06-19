@@ -1,5 +1,6 @@
 package ga.negyahu.music.artist.dto;
 
+import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.artist.ArtistMember;
 import ga.negyahu.music.subscribe.Subscribe;
 import java.time.LocalDateTime;
@@ -21,25 +22,10 @@ import org.springframework.data.annotation.LastModifiedDate;
 @NoArgsConstructor
 public class ArtistCreateDto {
 
-    @Column(name = "artist_name_kr", nullable = false, length = 30)
     private String name;
 
-    @Column(name = "artist_name_en", nullable = false, length = 20)
     private String nameEN;
 
-    @CreatedDate
-    private LocalDateTime registerDateTime;
-
-    @LastModifiedDate
-    private LocalDateTime updateDateTime;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "artist")
-    @Builder.Default
-    private List<ArtistMember> members = new ArrayList<>();
-
-    // 구독자 명단
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "artist")
-    @Builder.Default
-    private List<Subscribe> subscribes = new ArrayList<>();
+    private State state;
 
 }

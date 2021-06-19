@@ -5,6 +5,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.exception.ResultMessage;
+import ga.negyahu.music.fileupload.entity.AccountFileUpload;
 import ga.negyahu.music.fileupload.entity.BaseFileUpload;
 import ga.negyahu.music.fileupload.service.FileUploadService;
 import ga.negyahu.music.fileupload.util.FileUploadUtil;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class AccountFileUploadController implements InitializingBean {
 
     @Qualifier("accountFileUploadService")
-    private final FileUploadService accountFileUploadService;
+    private final FileUploadService<AccountFileUpload> accountFileUploadService;
     private final FileUploadUtil uploadUtil;
 
     public static final String ACCOUNT_FILE_URL = "/api/accounts/{id}/image";
@@ -56,11 +58,12 @@ public class AccountFileUploadController implements InitializingBean {
         if (!user.getId().equals(accountId)) {
             throw new AccessDeniedException("[ERROR] 접근할 수 없습니다.");
         }
-        BaseFileUpload baseFileUpload = this.accountFileUploadService.saveFile(multipartFile, user);
+        AccountFileUpload accountFileUpload = this.accountFileUploadService
+            .saveFile(multipartFile, user);
 
         URI uri = linkTo(methodOn(AccountFileUploadController.class).loadImage(accountId)).toUri();
 
-        return ResponseEntity.created(uri).body(baseFileUpload.getFullFilePath());
+        return ResponseEntity.created(uri).body(accountFileUpload.getFullFilePath());
     }
 
     public boolean isImageType(MultipartFile file) {
@@ -111,6 +114,16 @@ public class AccountFileUploadController implements InitializingBean {
             .contentType(MediaType.IMAGE_PNG)
             .body(byteArrayOutputStream.toByteArray())
             ;
+    }
+
+    @DeleteMapping(ACCOUNT_FILE_URL)
+    public ResponseEntity deleteImage(@PathVariable("id") Long accountId, @LoginUser Account user) {
+        if (!user.getId().equals(accountId)) {
+            throw new AccessDeniedException("[ERROR] 접근할 수 없습니다.");
+        }
+        this.accountFileUploadService.deleteImageByOwnerId(accountId);
+
+        return null;
     }
 
 

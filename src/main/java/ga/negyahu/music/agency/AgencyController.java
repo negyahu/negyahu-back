@@ -11,6 +11,8 @@ import ga.negyahu.music.agency.entity.Agency;
 import ga.negyahu.music.agency.service.AgencyService;
 import ga.negyahu.music.exception.Result;
 import ga.negyahu.music.exception.ResultMessage;
+import ga.negyahu.music.fileupload.entity.AgencyFileUpload;
+import ga.negyahu.music.fileupload.service.FileUploadService;
 import ga.negyahu.music.mapstruct.AgencyMapper;
 import ga.negyahu.music.security.annotation.LoginUser;
 import ga.negyahu.music.swagger.annotation.AgencyIDParam;
@@ -22,6 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.net.URI;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -47,6 +50,8 @@ public class AgencyController {
     public static final String ROOT_URL = "/api/agencies";
 
     private final AgencyService agencyService;
+    @Qualifier("agencyFileUploadService")
+    private final FileUploadService<AgencyFileUpload> fileUploadService;
     private AgencyMapper mapper = AgencyMapper.INSTANCE;
 
     /*
@@ -67,6 +72,8 @@ public class AgencyController {
         Agency agency = mapper.from(createDto);
         Agency register = agencyService.register(agency);
         AgencyDto dto = mapper.toDto(register);
+        fileUploadService.setOwner(createDto.getFileId(), register);
+
         URI uri = WebMvcLinkBuilder.linkTo(AgencyController.class).slash(agency.getId()).toUri();
         return ResponseEntity.created(uri).body(dto);
     }

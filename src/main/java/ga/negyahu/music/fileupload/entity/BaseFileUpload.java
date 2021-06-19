@@ -36,7 +36,6 @@ public class BaseFileUpload {
 
     public void setNewMultipartFile(MultipartFile multipartFile) {
         this.originalName = multipartFile.getOriginalFilename();
-        this.filePath = filePath;
         this.size = multipartFile.getSize();
         this.contentType = multipartFile.getContentType();
         createFileName();

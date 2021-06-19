@@ -40,8 +40,8 @@ public class AgencyCreateDto {
     private String email;
 
     @Nullable
-    @Schema(defaultValue = "[3,5,6,3]", description = "file upload를 통해 등록한 후 반환된 고유번호"
-        , allowableValues = {"1", "2", "3", "4"}, type = "array", subTypes = Long.class)
-    private Long[] fileIds;
+    @Schema(defaultValue = "10", description = "file upload를 통해 등록한 후 반환된 고유번호"
+        , example = "10", type = "long")
+    private Long fileId;
 
 }

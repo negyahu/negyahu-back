@@ -1,5 +1,8 @@
 package ga.negyahu.music.artist;
 
+import ga.negyahu.music.account.Account;
+import ga.negyahu.music.artist.dto.ArtistCreateDto;
+import ga.negyahu.music.security.annotation.LoginUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,12 +18,12 @@ public class ArtistController {
 //    private final ArtistFileUploadService artistFileUploadService;
 
     @PostMapping(ROOT_URL)
-    public ResponseEntity register() {
+    public ResponseEntity register(ArtistCreateDto createDto, @LoginUser Account user) {
+
+
 
         return null;
     }
-
-
 
 
 }

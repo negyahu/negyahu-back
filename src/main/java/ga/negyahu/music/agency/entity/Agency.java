@@ -4,6 +4,7 @@ import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.artist.Artist;
 import ga.negyahu.music.artist.ArtistMember;
+import ga.negyahu.music.fileupload.entity.FileUpload;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,12 +22,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.transaction.NotSupportedException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -40,7 +43,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EqualsAndHashCode(of = "id")
 @Table(name = "agency")
 @EntityListeners(AuditingEntityListener.class)
-public class Agency {
+public class Agency implements FileUpload {
 
     @Id
     @GeneratedValue
@@ -92,5 +95,19 @@ public class Agency {
 
     public boolean isOwner(Account account) {
         return this.account.getId().equals(account.getId());
+    }
+
+    @Override
+    public Object getEntity() {
+        if (this.id == null) {
+            throw new IllegalArgumentException("[ERROR] Agency를 먼저 등록한 후 사용할 수 있습니다.");
+        }
+        return this;
+    }
+
+    @SneakyThrows
+    @Override
+    public Long getFK() {
+        throw new NotSupportedException();
     }
 }

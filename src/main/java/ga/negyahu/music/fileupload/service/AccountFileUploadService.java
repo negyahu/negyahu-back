@@ -3,7 +3,7 @@ package ga.negyahu.music.fileupload.service;
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.exception.FileUploadException;
 import ga.negyahu.music.fileupload.entity.AccountFileUpload;
-import ga.negyahu.music.fileupload.entity.BaseFileUpload;
+import ga.negyahu.music.fileupload.entity.AgencyFileUpload;
 import ga.negyahu.music.fileupload.entity.FileUpload;
 import ga.negyahu.music.fileupload.repository.AccountFileUploadRepository;
 import ga.negyahu.music.fileupload.util.FileUploadUtil;
@@ -18,7 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service("accountFileUploadService")
 @Transactional
-public class AccountFileUploadService implements FileUploadService, InitializingBean {
+public class AccountFileUploadService implements FileUploadService<AccountFileUpload>,
+    InitializingBean {
 
     private final FileUploadUtil uploadUtil;
     private final AccountFileUploadRepository uploadRepository;
@@ -54,7 +55,7 @@ public class AccountFileUploadService implements FileUploadService, Initializing
     // Spring Data 는 RuntimeException 만 RollBack하기 때문에 따로 Exception 에 대한 롤백을 지정해야한다.
     @Transactional(rollbackFor = {Exception.class})
     @Override
-    public BaseFileUpload saveFile(MultipartFile multipartFile, FileUpload fileUpload) {
+    public AccountFileUpload saveFile(MultipartFile multipartFile, FileUpload fileUpload) {
         try {
             Account account = (Account) fileUpload.getEntity();
             AccountFileUpload upload = existImage(account.getId());
@@ -97,11 +98,31 @@ public class AccountFileUploadService implements FileUploadService, Initializing
     }
 
     @Override
-    public File getFileByOwnerId(Long accountId) {
+    public File getFileByOwnerId(Long ownerId) {
         AccountFileUpload file = this.uploadRepository
-            .findFirstByAccountId(accountId);
+            .findFirstByAccountId(ownerId);
         String fullFilePath = file.getFullFilePath();
         return getFileByFileFullName(fullFilePath);
+    }
+
+    @Override
+    public AgencyFileUpload getFileUploadByOwnerId(Long ownerId) {
+        return null;
+    }
+
+    @Override
+    public void deleteImageByOwnerId(Long accountId) {
+        AccountFileUpload file = this.uploadRepository.findFirstByAccountId(accountId);
+        File target = new File(file.getFullFilePath());
+        boolean result = target.exists();
+        if (result) {
+            this.uploadRepository.delete(file);
+        }
+    }
+
+    @Override
+    public AccountFileUpload setOwner(Long targetId, FileUpload fileUpload) {
+        return null;
     }
 
 }

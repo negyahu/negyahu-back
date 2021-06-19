@@ -1,5 +1,7 @@
 package ga.negyahu.music.fileupload.service;
 
+import ga.negyahu.music.fileupload.entity.AgencyFileUpload;
+import ga.negyahu.music.fileupload.entity.ArtistFileUpload;
 import ga.negyahu.music.fileupload.entity.BaseFileUpload;
 import ga.negyahu.music.fileupload.entity.FileUpload;
 import ga.negyahu.music.fileupload.repository.ArtistFileUploadRepository;
@@ -12,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service("artistFileUploadService")
-public class ArtistFileUploadService implements FileUploadService {
+public class ArtistFileUploadService implements FileUploadService<ArtistFileUpload> {
 
     private final ArtistFileUploadRepository artistFileUploadRepository;
     private final FileUploadUtil uploadUtil;
@@ -33,7 +35,7 @@ public class ArtistFileUploadService implements FileUploadService {
     }
 
     @Override
-    public BaseFileUpload saveFile(MultipartFile multipartFile, FileUpload fileUpload) {
+    public ArtistFileUpload saveFile(MultipartFile multipartFile, FileUpload fileUpload) {
         return null;
     }
 
@@ -48,7 +50,12 @@ public class ArtistFileUploadService implements FileUploadService {
     }
 
     @Override
-    public File getFileByOwnerId(Long accountId) {
+    public File getFileByOwnerId(Long ownerId) {
+        return null;
+    }
+
+    @Override
+    public AgencyFileUpload getFileUploadByOwnerId(Long ownerId) {
         return null;
     }
 
@@ -56,4 +63,15 @@ public class ArtistFileUploadService implements FileUploadService {
     public String getFilePath() {
         return filePath;
     }
+
+    @Override
+    public void deleteImageByOwnerId(Long accountId) {
+
+    }
+
+    @Override
+    public ArtistFileUpload setOwner(Long targetId,FileUpload fileUpload) {
+        return null;
+    }
+
 }
