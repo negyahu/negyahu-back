@@ -1,6 +1,5 @@
 package ga.negyahu.music.mail.template;
 
-import ga.negyahu.music.account.Account;
 import ga.negyahu.music.agency.entity.Agency;
 import ga.negyahu.music.mail.ReceiverContext;
 import javax.mail.MessagingException;
@@ -37,7 +36,7 @@ public class AgencyRegisterMail implements ReceiverContext {
 
         Context context = new Context();
         context.setVariable("agencyName", this.agency.getName());
-        context.setVariable("tempPassword", this.rawPassword);
+        context.setVariable("rawPassword", this.rawPassword);
         return context;
     }
 

@@ -1,13 +1,11 @@
 package ga.negyahu.music.agency.repository;
 
-import static ga.negyahu.music.account.QAccount.*;
-import static ga.negyahu.music.agency.entity.QAgency.*;
+import static ga.negyahu.music.account.QAccount.account;
+import static ga.negyahu.music.agency.entity.QAgency.agency;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import ga.negyahu.music.account.QAccount;
 import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.agency.dto.AgencyDto;
 import ga.negyahu.music.agency.dto.AgencySearch;
@@ -60,7 +58,7 @@ public class AgencyDaoImpl implements AgencyDao {
                 return builder.and(agency.bossName.contains(search.getKeyword()));
             case "email":
                 return builder.and(agency.account.email.contains(search.getKeyword()));
-            case "businessnumber":
+            case "businessNumber":
                 return builder.and(agency.businessNumber.contains(search.getKeyword()));
             case "state":
                 String keyword = search.getKeyword();

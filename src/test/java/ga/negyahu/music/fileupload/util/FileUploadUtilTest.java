@@ -1,10 +1,6 @@
 package ga.negyahu.music.fileupload.util;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.File;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 

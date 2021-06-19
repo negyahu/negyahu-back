@@ -1,11 +1,9 @@
 package ga.negyahu.music.agency.repository;
 
 import ga.negyahu.music.account.Account;
-import ga.negyahu.music.agency.dto.AgencyCreateDto;
 import ga.negyahu.music.agency.dto.AgencyDto;
 import ga.negyahu.music.agency.dto.AgencySearch;
 import ga.negyahu.music.agency.entity.Agency;
-import ga.negyahu.music.agency.entity.AgencyMember;
 import ga.negyahu.music.utils.AgencyTestUtils;
 import ga.negyahu.music.utils.DataJpaTestConfig;
 import ga.negyahu.music.utils.TestUtils;

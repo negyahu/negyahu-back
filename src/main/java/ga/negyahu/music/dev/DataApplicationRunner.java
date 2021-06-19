@@ -1,7 +1,6 @@
 package ga.negyahu.music.dev;
 
 import ga.negyahu.music.account.Account;
-import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
@@ -24,17 +23,6 @@ public class DataApplicationRunner implements ApplicationRunner {
             return;
         }
 
-        Account admin = Account.builder()
-            .username("관리자")
-            .email("admin@fantimate.me")
-            .role(Role.ADMIN)
-            .mobile("010-2222-3333")
-            .password(this.passwordEncoder.encode("qlqjs123"))
-            .certifiedEmail(true)
-            .isMemberShip(true)
-            .certifiedEmail(true)
-            .build();
-
         Account test1 = Account.builder()
             .username("양우정")
             .email("test1@naver.com")
@@ -50,7 +38,6 @@ public class DataApplicationRunner implements ApplicationRunner {
             .certifiedEmail(true)
             .build();
 
-        accountRepository.save(admin);
         accountRepository.save(test1);
         accountRepository.save(test2);
     }

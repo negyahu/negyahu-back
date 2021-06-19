@@ -1,7 +1,6 @@
 package ga.negyahu.music.account.controller;
 
 import static ga.negyahu.music.account.controller.AccountController.ROOT_URI;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

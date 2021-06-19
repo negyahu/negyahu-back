@@ -1,7 +1,5 @@
 package ga.negyahu.music.agency.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.agency.entity.AgencyMember;
 import ga.negyahu.music.utils.DataJpaTestConfig;

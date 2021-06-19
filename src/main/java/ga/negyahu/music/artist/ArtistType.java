@@ -2,6 +2,6 @@ package ga.negyahu.music.artist;
 
 public enum ArtistType {
 
-    SOLO,BOY_BAND_GIRL_BAND;
+    BOY_SOLO, GIRL_SOLO, BOY_BAND, GIRL_BAND;
 
 }

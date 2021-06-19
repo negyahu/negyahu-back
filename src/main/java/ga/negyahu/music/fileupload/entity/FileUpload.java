@@ -1,6 +1,5 @@
 package ga.negyahu.music.fileupload.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 
 @JsonIgnoreType

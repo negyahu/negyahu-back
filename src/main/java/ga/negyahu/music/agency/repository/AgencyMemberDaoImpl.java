@@ -1,10 +1,7 @@
 package ga.negyahu.music.agency.repository;
 
-import static ga.negyahu.music.agency.entity.QAgencyMember.*;
-
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import ga.negyahu.music.agency.entity.AgencyMember;
-import ga.negyahu.music.agency.entity.QAgencyMember;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;

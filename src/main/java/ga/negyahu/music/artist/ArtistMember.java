@@ -2,8 +2,11 @@ package ga.negyahu.music.artist;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.agency.entity.Agency;
+import ga.negyahu.music.artist.entity.Gender;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -25,11 +28,15 @@ import lombok.Setter;
 @EqualsAndHashCode(of = "id")
 public class ArtistMember {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "artist_member_id")
     private Long id;
 
     private String name;
+
+    @Enumerated(EnumType.ORDINAL)
+    private Gender gender;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agency_id")

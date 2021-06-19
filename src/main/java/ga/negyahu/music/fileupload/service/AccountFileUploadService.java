@@ -30,10 +30,10 @@ public class AccountFileUploadService implements FileUploadService, Initializing
 
     public AccountFileUploadService(FileUploadUtil uploadUtil,
         AccountFileUploadRepository uploadRepository,
-        @Value("${upload.path:#{null}}") String filePath) throws IOException {
+        @Value("${upload.account.path:#{null}}") String filePath) throws IOException {
         this.uploadRepository = uploadRepository;
         if (filePath == null) {
-            String targetDirectory = "upload/accounts/";
+            String targetDirectory = "upload/account/";
             ClassPathResource target = new ClassPathResource("");
             String resourcePath = target.getURI().getPath();
             filePath = resourcePath + targetDirectory;

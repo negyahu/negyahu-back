@@ -3,8 +3,6 @@ package ga.negyahu.music.fileupload.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.spy;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.fileupload.entity.AccountFileUpload;

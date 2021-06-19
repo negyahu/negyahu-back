@@ -3,7 +3,6 @@ package ga.negyahu.music.fileupload.entity;
 import java.util.UUID;
 import javax.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

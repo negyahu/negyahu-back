@@ -17,6 +17,4 @@ public interface AgencyService {
 
 
     boolean isManager(Long id, Long agencyMemberId);
-
-    void permit(Account admin, Long id);
 }

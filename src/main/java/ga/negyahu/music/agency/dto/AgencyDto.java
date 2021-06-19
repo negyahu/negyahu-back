@@ -1,31 +1,12 @@
 package ga.negyahu.music.agency.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.entity.State;
-import ga.negyahu.music.agency.entity.AgencyMember;
-import ga.negyahu.music.artist.Artist;
-import ga.negyahu.music.artist.ArtistMember;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Data

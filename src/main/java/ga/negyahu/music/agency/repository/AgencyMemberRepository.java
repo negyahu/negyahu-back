@@ -1,10 +1,7 @@
 package ga.negyahu.music.agency.repository;
 
-import ga.negyahu.music.account.Account;
-import ga.negyahu.music.agency.entity.Agency;
 import ga.negyahu.music.agency.entity.AgencyMember;
 import java.util.List;
-import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;

@@ -11,16 +11,11 @@ import ga.negyahu.music.agency.repository.AgencyMemberRepository;
 import ga.negyahu.music.agency.repository.AgencyRepository;
 import ga.negyahu.music.event.agency.AgencyRegisterEvent;
 import ga.negyahu.music.exception.AgencyNotFoundException;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLNonTransientException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
@@ -106,17 +101,6 @@ public class AgencyServiceImpl implements AgencyService {
     @Override
     public boolean isManager(Long id, Long agencyMemberId) {
         return this.agencyMemberRepository.existsByAgency_IdAndAccount_Id(id, agencyMemberId);
-    }
-
-    @Override
-    public void permit(Account admin, Long id) {
-        if (admin.getRole() != Role.ADMIN) {
-            throw new AccessDeniedException("[ERROR] 접근할 수 없습니다.}");
-        }
-        Agency agency = findByIdElseThrow(id);
-        agency.setState(State.ACTIVE);
-        Account boss = agency.getAccount();
-        boss.setState(State.ACTIVE);
     }
 
 
