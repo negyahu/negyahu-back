@@ -1,7 +1,10 @@
 package ga.negyahu.music.dev;
 
 import ga.negyahu.music.account.Account;
+import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.account.repository.AccountRepository;
+import ga.negyahu.music.agency.entity.Agency;
+import ga.negyahu.music.agency.repository.AgencyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Component;
 public class DataApplicationRunner implements ApplicationRunner {
 
     private final AccountRepository accountRepository;
+    private final AgencyRepository agencyRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -23,6 +27,35 @@ public class DataApplicationRunner implements ApplicationRunner {
             return;
         }
 
+        saveTestAccounts();
+        saveTestAgency();
+    }
+
+    private void saveTestAgency() {
+        Account agencyBosss = Account.builder()
+            .username("킹우정")
+            .certifiedEmail(true)
+            .isMemberShip(true)
+            .password(this.passwordEncoder.encode("dnwjd123"))
+            .mobile("01033334444")
+            .email("agency1@gmail.com")
+            .state(State.ACTIVE)
+            .build();
+        this.accountRepository.save(agencyBosss);
+
+        Agency agency = Agency.builder()
+            .state(State.ACTIVE)
+            .businessNumber("000-33-55555")
+            .bossName("킹우정")
+            .mobile("01033334444")
+            .name("우정엔터테이먼트")
+            .nameEN("YouzhengENT")
+            .account(agencyBosss)
+            .build();
+        this.agencyRepository.save(agency);
+    }
+
+    private void saveTestAccounts() {
         Account test1 = Account.builder()
             .username("양우정")
             .email("test1@naver.com")

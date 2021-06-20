@@ -1,8 +1,7 @@
-package ga.negyahu.music.artist;
+package ga.negyahu.music.artist.entity;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.agency.entity.Agency;
-import ga.negyahu.music.artist.entity.Gender;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -52,8 +51,6 @@ public class ArtistMember {
 
     private String instagram;
 
-    private String twitter;
-
-    private String youtube;
+    private String etc;
 
 }

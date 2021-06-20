@@ -2,8 +2,8 @@ package ga.negyahu.music.agency.entity;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.entity.State;
-import ga.negyahu.music.artist.Artist;
-import ga.negyahu.music.artist.ArtistMember;
+import ga.negyahu.music.artist.entity.Artist;
+import ga.negyahu.music.artist.entity.ArtistMember;
 import ga.negyahu.music.fileupload.entity.FileUpload;
 import java.time.LocalDate;
 import java.util.ArrayList;

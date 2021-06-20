@@ -1,6 +1,7 @@
 package ga.negyahu.music.fileupload.entity;
 
-import ga.negyahu.music.artist.Artist;
+import ga.negyahu.music.artist.entity.Artist;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,4 +33,10 @@ public class ArtistFileUpload extends BaseFileUpload {
     @JoinColumn(name = "artist_id")
     private Artist artist;
 
+    @Override
+    public void createFileName() {
+        String[] split = getOriginalName().split("\\.");
+        String fileType = split[split.length - 1];
+        setFileName(UUID.randomUUID().toString() + "." + fileType);
+    }
 }

@@ -1,4 +1,4 @@
-package ga.negyahu.music.artist;
+package ga.negyahu.music.artist.entity;
 
 public enum ArtistType {
 

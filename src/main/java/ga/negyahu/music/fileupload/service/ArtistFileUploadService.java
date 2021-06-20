@@ -1,5 +1,10 @@
 package ga.negyahu.music.fileupload.service;
 
+import ga.negyahu.music.account.Account;
+import ga.negyahu.music.artist.entity.Artist;
+import ga.negyahu.music.exception.FileNotFoundException;
+import ga.negyahu.music.exception.FileUploadException;
+import ga.negyahu.music.fileupload.entity.AccountFileUpload;
 import ga.negyahu.music.fileupload.entity.AgencyFileUpload;
 import ga.negyahu.music.fileupload.entity.ArtistFileUpload;
 import ga.negyahu.music.fileupload.entity.BaseFileUpload;
@@ -36,17 +41,36 @@ public class ArtistFileUploadService implements FileUploadService<ArtistFileUplo
 
     @Override
     public ArtistFileUpload saveFile(MultipartFile multipartFile, FileUpload fileUpload) {
-        return null;
+        try {
+            ArtistFileUpload image = new ArtistFileUpload();
+            BaseFileUpload base = new BaseFileUpload(multipartFile, this.filePath);
+            image.setBaseFileUpload(base);
+            image.createFileName();
+            ArtistFileUpload save = this.artistFileUploadRepository.save(image);
+            String fullFilePath = save.getFullFilePath();
+            multipartFile.transferTo(new File(fullFilePath));
+            return save;
+        } catch (IOException e) {
+            throw new FileUploadException();
+        }
     }
 
     @Override
     public File getFileByFileFullName(String fullFileName) {
-        return null;
+        File file = new File(fullFileName);
+        if (!file.exists()) {
+            throw new FileNotFoundException();
+        }
+        return file;
     }
 
     @Override
     public File getFileByFileName(String fileName) {
-        return null;
+        File file = new File(this.filePath + "/" + fileName);
+        if(!file.exists()){
+            throw new FileNotFoundException();
+        }
+        return file;
     }
 
     @Override
@@ -70,8 +94,13 @@ public class ArtistFileUploadService implements FileUploadService<ArtistFileUplo
     }
 
     @Override
-    public ArtistFileUpload setOwner(Long targetId,FileUpload fileUpload) {
-        return null;
+    public ArtistFileUpload setOwner(Long targetId, FileUpload fileUpload) {
+        ArtistFileUpload upload = this.artistFileUploadRepository.findById(targetId).get();
+        if (upload == null) {
+            return null;
+        }
+        upload.setArtist((Artist) fileUpload.getEntity());
+        return upload;
     }
 
 }

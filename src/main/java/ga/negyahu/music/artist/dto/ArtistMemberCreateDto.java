@@ -1,8 +1,6 @@
 package ga.negyahu.music.artist.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ga.negyahu.music.account.entity.State;
-import java.util.List;
+import ga.negyahu.music.artist.entity.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,14 +10,21 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ArtistCreateDto {
+public class ArtistMemberCreateDto {
+
+    private String email;
 
     private String nameKR;
 
+    private String password;
+
     private String nameEN;
 
-    @JsonProperty("isBlind")
-    private boolean isBlind;
+    private Gender gender;
+
+    private String instagram;
+
+    private String etc;
 
     private Long imageId;
 

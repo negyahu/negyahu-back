@@ -1,6 +1,7 @@
-package ga.negyahu.music.artist;
+package ga.negyahu.music.artist.entity;
 
 import ga.negyahu.music.agency.entity.Agency;
+import ga.negyahu.music.fileupload.entity.FileUpload;
 import ga.negyahu.music.subscribe.Subscribe;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Builder
 @EqualsAndHashCode(of = "id")
 @EntityListeners(AuditingEntityListener.class)
-public class Artist {
+public class Artist implements FileUpload {
 
     @Id
     @GeneratedValue
@@ -40,7 +41,7 @@ public class Artist {
     private Long id;
 
     @Column(name = "artist_name_kr", nullable = false, length = 30)
-    private String name;
+    private String nameKR;
 
     @Column(name = "artist_name_en", nullable = false, length = 20)
     private String nameEN;
@@ -66,4 +67,13 @@ public class Artist {
     @Builder.Default
     private List<Subscribe> subscribes = new ArrayList<>();
 
+    @Override
+    public Object getEntity() {
+        return this;
+    }
+
+    @Override
+    public Long getFK() {
+        return this.getId();
+    }
 }

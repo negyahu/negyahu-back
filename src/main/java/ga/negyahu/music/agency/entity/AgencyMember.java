@@ -3,6 +3,7 @@ package ga.negyahu.music.agency.entity;
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.entity.State;
 import java.time.LocalDate;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -10,7 +11,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -56,7 +59,7 @@ public class AgencyMember {
     private Account account;
 
     private AgencyRole agencyRole;
-
+    
     private State state;
 
     @CreatedDate
