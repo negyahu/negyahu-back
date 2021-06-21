@@ -2,6 +2,7 @@ package ga.negyahu.music.artist;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
+import ga.negyahu.music.ScrollPageable;
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.artist.dto.ArtistCreateDto;
 import ga.negyahu.music.artist.dto.ArtistDto;
@@ -19,12 +20,15 @@ import ga.negyahu.music.security.annotation.LoginUser;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.http.fileupload.FileUpload;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,14 +50,26 @@ public class ArtistController {
     private final ArtistService artistService;
     private final ArtistFileUploadRepository artistFileUploadRepository;
 
+    @GetMapping("/api/artists")
+    public ResponseEntity fetchList(@RequestParam(required = false) ScrollPageable pageable) {
+        List<Artist> artists = artistService.fetchList(pageable);
+        List<ArtistDto> results = new ArrayList<>(artists.size());
+        for(Artist artist :artists) {
+            ArtistDto dto = this.artistMapper.toDto(artist);
+            results.add(dto);
+        }
+
+        return ResponseEntity.ok(results);
+    }
+
     @PostMapping(value = ROOT_URL)
     public ResponseEntity register(@RequestBody ArtistCreateDto createDto,
         @PathVariable("agencyId") Long agencyId, @LoginUser Account user) {
-        // TODO 접속한 유저가 agency의 주인인지 확인
         Artist from = artistMapper.from(createDto);
-        Artist register = this.artistService.register(from,agencyId,user);
-        this.artistFileUploadService.setOwner(createDto.getImageId(), register);
+        Artist register = this.artistService.register(from, agencyId, user);
+//        this.artistFileUploadService.setOwner(createDto.getImageId(), register);
         ArtistDto artistDto = this.artistMapper.toDto(register);
+
         return ResponseEntity.created(URI.create("ddd")).body(artistDto);
     }
 
@@ -69,7 +85,7 @@ public class ArtistController {
         ArtistFileUpload upload = artistFileUploadService
             .saveFile(file, null);
 
-        // 사진의 FullPath 를 Location에 담아서 반환함 : 201 create
+        // 사진의 FullPath 를 Location 에 담아서 반환함 : 201 create
         URI uri = linkTo(methodOn(ArtistController.class).loadImage(upload.getFileName())).toUri();
         return ResponseEntity.created(uri).body(upload);
     }

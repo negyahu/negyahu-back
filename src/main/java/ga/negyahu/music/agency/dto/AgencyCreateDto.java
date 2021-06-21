@@ -16,7 +16,7 @@ public class AgencyCreateDto {
 
     @Schema(description = "우정엔터테이먼트", defaultValue = "소속사 한글이름"
         , example = "우정엔터테이먼트")
-    private String name;
+    private String nameKR;
 
     @Schema(description = "YouzhengEntertainment", defaultValue = "소속사 영어이름, URL에 사용된다."
         , example = "YouzhengEntertainment")

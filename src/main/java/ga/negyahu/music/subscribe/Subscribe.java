@@ -1,7 +1,7 @@
 package ga.negyahu.music.subscribe;
 
 import ga.negyahu.music.account.Account;
-import ga.negyahu.music.artist.Artist;
+import ga.negyahu.music.artist.entity.Artist;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;

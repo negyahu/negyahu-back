@@ -50,7 +50,7 @@ public class Agency implements FileUpload {
     @Column(name = "agency_id")
     private Long id;
 
-    private String name;
+    private String nameKR;
 
     private String nameEN;
 

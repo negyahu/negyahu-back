@@ -16,7 +16,7 @@ public interface AgencyMapper {
     @Mapping(target = "state", constant = "WAIT")
     Agency from(AgencyCreateDto createDto);
 
-    @Mapping(source = "account.email", target = "email")
+//    @Mapping(source = "account.email", target = "email")
     AgencyDto toDto(Agency agency);
 
 }

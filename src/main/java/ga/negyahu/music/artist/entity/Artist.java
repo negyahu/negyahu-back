@@ -1,6 +1,7 @@
 package ga.negyahu.music.artist.entity;
 
 import ga.negyahu.music.agency.entity.Agency;
+import ga.negyahu.music.fileupload.entity.ArtistFileUpload;
 import ga.negyahu.music.fileupload.entity.FileUpload;
 import ga.negyahu.music.subscribe.Subscribe;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -58,6 +60,9 @@ public class Artist implements FileUpload {
     @LastModifiedDate
     private LocalDateTime updateDateTime;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    private ArtistFileUpload profileImage;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "artist")
     @Builder.Default
     private List<ArtistMember> members = new ArrayList<>();
@@ -66,6 +71,11 @@ public class Artist implements FileUpload {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "artist")
     @Builder.Default
     private List<Subscribe> subscribes = new ArrayList<>();
+
+    public void setProfileImage(ArtistFileUpload profileImage) {
+        this.profileImage = profileImage;
+        profileImage.setArtist(this);
+    }
 
     @Override
     public Object getEntity() {

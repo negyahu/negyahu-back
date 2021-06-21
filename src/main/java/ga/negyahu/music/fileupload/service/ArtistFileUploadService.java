@@ -4,7 +4,6 @@ import ga.negyahu.music.account.Account;
 import ga.negyahu.music.artist.entity.Artist;
 import ga.negyahu.music.exception.FileNotFoundException;
 import ga.negyahu.music.exception.FileUploadException;
-import ga.negyahu.music.fileupload.entity.AccountFileUpload;
 import ga.negyahu.music.fileupload.entity.AgencyFileUpload;
 import ga.negyahu.music.fileupload.entity.ArtistFileUpload;
 import ga.negyahu.music.fileupload.entity.BaseFileUpload;
@@ -16,6 +15,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service("artistFileUploadService")
@@ -39,6 +39,7 @@ public class ArtistFileUploadService implements FileUploadService<ArtistFileUplo
         this.filePath = filePath;
     }
 
+    @Transactional
     @Override
     public ArtistFileUpload saveFile(MultipartFile multipartFile, FileUpload fileUpload) {
         try {
@@ -67,7 +68,7 @@ public class ArtistFileUploadService implements FileUploadService<ArtistFileUplo
     @Override
     public File getFileByFileName(String fileName) {
         File file = new File(this.filePath + "/" + fileName);
-        if(!file.exists()){
+        if (!file.exists()) {
             throw new FileNotFoundException();
         }
         return file;
@@ -95,7 +96,13 @@ public class ArtistFileUploadService implements FileUploadService<ArtistFileUplo
 
     @Override
     public ArtistFileUpload setOwner(Long targetId, FileUpload fileUpload) {
-        ArtistFileUpload upload = this.artistFileUploadRepository.findById(targetId).get();
+        ArtistFileUpload upload = null;
+        // 사진이 없더라도 기존의 트랜잭션에 롤백을 시키지 않는다.
+        try {
+            upload = this.artistFileUploadRepository.findById(targetId).get();
+        } catch (Exception e) {
+
+        }
         if (upload == null) {
             return null;
         }

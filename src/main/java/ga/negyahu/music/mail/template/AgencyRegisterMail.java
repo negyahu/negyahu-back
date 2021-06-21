@@ -27,7 +27,7 @@ public class AgencyRegisterMail implements ReceiverContext {
         Validate.notEmpty(email, "[ERROR] 올바르지 못한 수신자 정보입니다.");
 
         helper.setTo(email);
-        helper.setSubject(agency.getName() + "의 소속사 등록신청이 완료되었습니다.");
+        helper.setSubject(agency.getNameKR() + "의 소속사 등록신청이 완료되었습니다.");
     }
 
     @Override
@@ -35,7 +35,7 @@ public class AgencyRegisterMail implements ReceiverContext {
         Validate.notEmpty(agency.getAccount().getEmail(), "[ERROR] 올바르지 못한 수신자 정보입니다.");
 
         Context context = new Context();
-        context.setVariable("agencyName", this.agency.getName());
+        context.setVariable("agencyName", this.agency.getNameKR());
         context.setVariable("rawPassword", this.rawPassword);
         return context;
     }

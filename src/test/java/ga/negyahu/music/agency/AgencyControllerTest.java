@@ -94,7 +94,7 @@ public class AgencyControllerTest {
         assertEquals(createDto.getMobile(), agency.getMobile());
         assertEquals(createDto.getBossName(), agency.getBossName());
         assertEquals(createDto.getNameEN(), agency.getNameEN());
-        assertEquals(createDto.getName(), agency.getName());
+        assertEquals(createDto.getNameKR(), agency.getNameKR());
         assertEquals(State.WAIT, agency.getState());
         assertNotNull(agency.getSignUpDate());
         assertNotNull(agency.getUpdateDateTime());

@@ -1,6 +1,7 @@
 package ga.negyahu.music.dev;
 
 import ga.negyahu.music.account.Account;
+import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.agency.entity.Agency;
@@ -38,6 +39,7 @@ public class DataApplicationRunner implements ApplicationRunner {
             .isMemberShip(true)
             .password(this.passwordEncoder.encode("dnwjd123"))
             .mobile("01033334444")
+            .role(Role.AGENCY)
             .email("agency1@gmail.com")
             .state(State.ACTIVE)
             .build();
@@ -48,7 +50,7 @@ public class DataApplicationRunner implements ApplicationRunner {
             .businessNumber("000-33-55555")
             .bossName("킹우정")
             .mobile("01033334444")
-            .name("우정엔터테이먼트")
+            .nameKR("우정엔터테이먼트")
             .nameEN("YouzhengENT")
             .account(agencyBosss)
             .build();

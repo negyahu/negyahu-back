@@ -28,9 +28,9 @@ public class AgencyDaoImpl implements AgencyDao {
     public Page<AgencyDto> searchAgency(AgencySearch search, Pageable pageable) {
 
         QueryResults<AgencyDto> results = query
-            .select(new QAgencyDto(agency.id, agency.name, agency.nameEN, agency.businessNumber,
-                agency.bossName, agency.mobile, agency.state, agency.signUpDate,
-                agency.account.email))
+            .select(
+                new QAgencyDto(agency.id, agency.nameKR, agency.nameEN, agency.businessNumber,
+                    agency.bossName, agency.mobile, agency.state, agency.signUpDate))
             .from(agency)
             .join(agency.account, account)
             .where(addSearchQuery(search))
@@ -50,8 +50,8 @@ public class AgencyDaoImpl implements AgencyDao {
         String type = search.getType();
         type = type.toLowerCase(Locale.ROOT);
         switch (type) {
-            case "name":
-                return builder.and(agency.name.contains(search.getKeyword()));
+            case "nameKR":
+                return builder.and(agency.nameKR.contains(search.getKeyword()));
             case "nameEn":
                 return builder.and(agency.nameEN.contains(search.getKeyword()));
             case "bossName":

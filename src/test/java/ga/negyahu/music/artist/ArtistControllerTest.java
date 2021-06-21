@@ -28,11 +28,11 @@ public class ArtistControllerTest {
         ArtistCreateDto artistCreateDto = new ArtistCreateDto();
         ArtistMemberCreateDto member1 = ArtistMemberCreateDto.builder()
             .email("email")
-            .name("name")
+            .nameKR("name")
             .build();
         ArtistMemberCreateDto member2 = ArtistMemberCreateDto.builder()
             .email("email")
-            .name("name")
+            .nameKR("name")
             .build();
 
         ResultActions perform = this.mockMvc.perform(post("/api/artist")

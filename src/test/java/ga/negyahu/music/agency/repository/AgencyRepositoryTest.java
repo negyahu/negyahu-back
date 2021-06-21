@@ -54,7 +54,6 @@ public class AgencyRepositoryTest {
 
         Agency agency = this.agencies.get(0);
         Assertions.assertEquals(agency.getId(),dto.getId());
-        Assertions.assertEquals(agency.getAccount().getEmail(),dto.getEmail());
     }
 
 }

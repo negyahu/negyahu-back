@@ -54,6 +54,7 @@ public class BaseFileUpload {
         this.filePath = fileUpload.filePath;
         this.originalName = fileUpload.originalName;
         this.contentType = fileUpload.getContentType();
+        this.size = fileUpload.getSize();
     }
 
 }

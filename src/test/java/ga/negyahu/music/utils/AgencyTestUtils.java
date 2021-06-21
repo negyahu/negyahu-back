@@ -11,7 +11,7 @@ public class AgencyTestUtils {
     public static AgencyCreateDto agencyCreateDto() {
         return AgencyCreateDto.builder()
             .nameEN("빅히트")
-            .name("BIGHIT")
+            .nameKR("BIGHIT")
             .email("yangfriendship.dev@gmail.com")
             .bossName("김덕배")
             .businessNumber("본적이없어예시도못들겠네")
@@ -21,7 +21,7 @@ public class AgencyTestUtils {
 
     public static Agency createDefaultAgency(Account account) {
         return Agency.builder()
-            .name("빅히트")
+            .nameKR("빅히트")
             .nameEN("BIGHIT")
             .account(account)
             .bossName("김덕배")

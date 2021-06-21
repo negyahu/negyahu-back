@@ -1,5 +1,6 @@
 package ga.negyahu.music.artist.service;
 
+import ga.negyahu.music.ScrollPageable;
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.agency.entity.Agency;
@@ -8,9 +9,10 @@ import ga.negyahu.music.artist.entity.Artist;
 import ga.negyahu.music.artist.entity.ArtistMember;
 import ga.negyahu.music.artist.repository.ArtistMemberRepository;
 import ga.negyahu.music.artist.repository.ArtistRepository;
+import ga.negyahu.music.fileupload.entity.ArtistFileUpload;
 import ga.negyahu.music.fileupload.repository.ArtistFileUploadRepository;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -34,9 +36,25 @@ public class ArtistServiceImpl implements ArtistService {
                     throw new AccessDeniedException("[ERROR] 접근할 수 없습니다.");
                 }
             );
+        Long id = artist.getProfileImage().getId();
+        ArtistFileUpload findImage = null;
+        try {
+            findImage = artistFileUploadRepository.findById(id).get();
+        } catch (NoSuchElementException e) {
+
+        }
+        if (findImage != null) {
+            artist.setProfileImage(findImage);
+        }
         artist.setAgency(agency);
         Artist save = this.artistRepository.save(artist);
         return save;
+    }
+
+    @Transactional
+    @Override
+    public List<Artist> fetchList(ScrollPageable pageable) {
+        return this.artistRepository.findAllByPageable(pageable);
     }
 
     private void registerMembers(List<ArtistMember> members, final Artist artist) {

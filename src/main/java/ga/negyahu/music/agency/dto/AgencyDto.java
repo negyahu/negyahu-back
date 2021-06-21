@@ -19,7 +19,7 @@ public class AgencyDto {
     private Long id;
 
     @Schema(defaultValue = "우정엔터테이먼트", description = "소속사 이름(한)", example = "우정엔터테이먼트")
-    private String name;
+    private String nameKR;
 
     @Schema(defaultValue = "YouzhentENT", description = "소속사 이름(영)", example = "YouzhentENT")
     private String nameEN;
@@ -39,21 +39,20 @@ public class AgencyDto {
     @Schema(defaultValue = "2021-01-01", description = "소속사 등록일", example = "2021-01-01")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate signUpDate;
-
-    @Schema(defaultValue = "youzheng.ent@gmail.com", description = "대표 이메일, 로그인시 사용", example = "youzheng.ent@gmail.com")
-    private String email;
+//
+//    @Schema(defaultValue = "youzheng.ent@gmail.com", description = "대표 이메일, 로그인시 사용", example = "youzheng.ent@gmail.com")
+//    private String email;
 
     @QueryProjection
-    public AgencyDto(Long id, String name, String nameEN, String businessNumber,
-        String bossName, String mobile, State state, LocalDate signUpDate, String email) {
+    public AgencyDto(Long id, String nameKR, String nameEN, String businessNumber,
+        String bossName, String mobile, State state, LocalDate signUpDate) {
         this.id = id;
-        this.name = name;
+        this.nameKR = nameKR;
         this.nameEN = nameEN;
         this.businessNumber = businessNumber;
         this.bossName = bossName;
         this.mobile = mobile;
         this.state = state;
         this.signUpDate = signUpDate;
-        this.email = email;
     }
 }

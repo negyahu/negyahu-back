@@ -18,7 +18,7 @@ public class AgencyMapperTest {
 
         Agency entity = mapper.from(dto);
 
-        assertEquals(dto.getName(), entity.getName());
+        assertEquals(dto.getNameKR(), entity.getNameKR());
         assertEquals(dto.getBusinessNumber(), entity.getBusinessNumber());
         assertEquals(dto.getMobile(), entity.getMobile());
         assertEquals(dto.getBossName(), entity.getBossName());
