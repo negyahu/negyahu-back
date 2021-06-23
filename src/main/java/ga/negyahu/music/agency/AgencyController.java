@@ -11,7 +11,7 @@ import ga.negyahu.music.agency.entity.Agency;
 import ga.negyahu.music.agency.service.AgencyService;
 import ga.negyahu.music.exception.Result;
 import ga.negyahu.music.exception.ResultMessage;
-import ga.negyahu.music.fileupload.entity.AgencyFileUpload;
+import ga.negyahu.music.fileupload.entity.AgencyUpload;
 import ga.negyahu.music.fileupload.service.FileUploadService;
 import ga.negyahu.music.mapstruct.AgencyMapper;
 import ga.negyahu.music.security.annotation.LoginUser;
@@ -51,7 +51,7 @@ public class AgencyController {
 
     private final AgencyService agencyService;
     @Qualifier("agencyFileUploadService")
-    private final FileUploadService<AgencyFileUpload> fileUploadService;
+    private final FileUploadService<AgencyUpload> fileUploadService;
     private AgencyMapper mapper = AgencyMapper.INSTANCE;
 
     /*

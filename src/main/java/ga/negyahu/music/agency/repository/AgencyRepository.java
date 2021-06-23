@@ -16,4 +16,6 @@ public interface AgencyRepository extends JpaRepository<Agency, Long>, AgencyDao
     @EntityGraph(attributePaths = {"account"})
     Optional<Agency> findByIdAndAccount(Long id, Account account);
 
+
+
 }

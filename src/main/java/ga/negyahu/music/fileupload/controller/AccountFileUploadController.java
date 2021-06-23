@@ -5,8 +5,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.exception.ResultMessage;
-import ga.negyahu.music.fileupload.entity.AccountFileUpload;
-import ga.negyahu.music.fileupload.entity.BaseFileUpload;
+import ga.negyahu.music.fileupload.entity.AccountUpload;
 import ga.negyahu.music.fileupload.service.FileUploadService;
 import ga.negyahu.music.fileupload.util.FileUploadUtil;
 import ga.negyahu.music.security.annotation.LoginUser;
@@ -34,7 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class AccountFileUploadController implements InitializingBean {
 
     @Qualifier("accountFileUploadService")
-    private final FileUploadService<AccountFileUpload> accountFileUploadService;
+    private final FileUploadService<AccountUpload> accountFileUploadService;
     private final FileUploadUtil uploadUtil;
 
     public static final String ACCOUNT_FILE_URL = "/api/accounts/{id}/image";
@@ -55,15 +54,10 @@ public class AccountFileUploadController implements InitializingBean {
                 .createFailMessage("[ERROR] 이미지 파일만 업로드할 수 있습니다.");
             return ResponseEntity.badRequest().body(message);
         }
-        if (!user.getId().equals(accountId)) {
-            throw new AccessDeniedException("[ERROR] 접근할 수 없습니다.");
-        }
-        AccountFileUpload accountFileUpload = this.accountFileUploadService
-            .saveFile(multipartFile, user);
 
-        URI uri = linkTo(methodOn(AccountFileUploadController.class).loadImage(accountId)).toUri();
-
-        return ResponseEntity.created(uri).body(accountFileUpload.getFullFilePath());
+        AccountUpload upload = this.accountFileUploadService
+            .saveFile(multipartFile, Account.builder().id(accountId).build(), user);
+        return UploadController.createResponseEntity(upload);
     }
 
     public boolean isImageType(MultipartFile file) {

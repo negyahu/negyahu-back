@@ -6,12 +6,13 @@ import ga.negyahu.music.account.entity.Address;
 import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.area.Area;
-import ga.negyahu.music.fileupload.entity.AccountFileUpload;
+import ga.negyahu.music.fileupload.entity.AccountUpload;
 import ga.negyahu.music.fileupload.entity.FileUpload;
 import ga.negyahu.music.subscribe.Subscribe;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -22,8 +23,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,7 +50,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
 public class Account implements FileUpload {
-
     @Id
     @GeneratedValue
     @Column(name = "account_id")
@@ -92,11 +94,15 @@ public class Account implements FileUpload {
 
     private String certifyCode;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_iamge_id")
+    private AccountUpload profileImage;
+
     /* 연관관계 맵핑*/
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "account")
     @Builder.Default
     @LazyCollection(LazyCollectionOption.EXTRA)
-    private List<AccountFileUpload> fileUpLoads = new ArrayList<>();
+    private List<AccountUpload> fileUpLoads = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

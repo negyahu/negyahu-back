@@ -26,11 +26,9 @@ public class AgencyCreateDto {
         , example = "000-00-00000")
     private String businessNumber;
 
-
     @Schema(description = "010-1234-5678", defaultValue = "소속사 대표 연락처"
         , example = "010-1234-5678")
     private String mobile;
-
 
     @Schema(description = "소속사 대표 이름", defaultValue = "양우정", example = "양우정")
     private String bossName;

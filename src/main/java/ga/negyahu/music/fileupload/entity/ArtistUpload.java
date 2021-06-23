@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Getter
@@ -22,7 +23,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class ArtistFileUpload extends BaseFileUpload {
+public class ArtistUpload extends BaseFileUpload {
 
     @Id
     @GeneratedValue
@@ -34,10 +35,8 @@ public class ArtistFileUpload extends BaseFileUpload {
     @JoinColumn(name = "artist_id")
     private Artist artist;
 
-    @Override
-    public void createFileName() {
-        String[] split = getOriginalName().split("\\.");
-        String fileType = split[split.length - 1];
-        setFileName(UUID.randomUUID().toString() + "." + fileType);
+    public ArtistUpload(MultipartFile file, String filePath, String type) {
+        super(file, filePath, type);
     }
+
 }

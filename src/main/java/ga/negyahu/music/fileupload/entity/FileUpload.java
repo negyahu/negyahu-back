@@ -3,9 +3,9 @@ package ga.negyahu.music.fileupload.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 
 @JsonIgnoreType
-public interface FileUpload {
+public interface FileUpload<T> {
 
-    Object getEntity();
+    T getEntity();
 
     Long getFK();
 

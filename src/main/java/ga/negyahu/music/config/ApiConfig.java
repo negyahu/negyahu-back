@@ -28,7 +28,6 @@ public class ApiConfig {
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter
         .ofPattern("yyyy-MM-dd-hh-mm");
 
-
     @Bean
     @Primary
     public ObjectMapper objectMapper() {

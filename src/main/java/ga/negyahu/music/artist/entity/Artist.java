@@ -1,7 +1,7 @@
 package ga.negyahu.music.artist.entity;
 
 import ga.negyahu.music.agency.entity.Agency;
-import ga.negyahu.music.fileupload.entity.ArtistFileUpload;
+import ga.negyahu.music.fileupload.entity.ArtistUpload;
 import ga.negyahu.music.fileupload.entity.FileUpload;
 import ga.negyahu.music.subscribe.Subscribe;
 import java.time.LocalDateTime;
@@ -61,7 +61,7 @@ public class Artist implements FileUpload {
     private LocalDateTime updateDateTime;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private ArtistFileUpload profileImage;
+    private ArtistUpload profileImage;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "artist")
     @Builder.Default
@@ -72,7 +72,7 @@ public class Artist implements FileUpload {
     @Builder.Default
     private List<Subscribe> subscribes = new ArrayList<>();
 
-    public void setProfileImage(ArtistFileUpload profileImage) {
+    public void setProfileImage(ArtistUpload profileImage) {
         this.profileImage = profileImage;
         profileImage.setArtist(this);
     }

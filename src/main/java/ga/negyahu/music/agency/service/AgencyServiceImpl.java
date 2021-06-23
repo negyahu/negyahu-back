@@ -55,6 +55,7 @@ public class AgencyServiceImpl implements AgencyService {
         account.setRole(Role.AGENCY);
         account.setState(State.WAIT);
         account.setMobile(agency.getMobile());
+        account.setCertifiedEmail(true);
         account.setUsername(agency.getBossName());
         account.setPassword(this.passwordEncoder.encode(tempPassword));
         Account save = accountRepository.save(account);

@@ -1,7 +1,9 @@
 package ga.negyahu.music.artist.entity;
 
 import ga.negyahu.music.account.Account;
+import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.agency.entity.Agency;
+import ga.negyahu.music.fileupload.entity.FileUpload;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -25,14 +27,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "id")
-public class ArtistMember {
+public class ArtistMember implements FileUpload<ArtistMember> {
 
     @Id
     @GeneratedValue
     @Column(name = "artist_member_id")
     private Long id;
 
-    private String name;
+    private String nameKR;
+
+    private String nameEN;
 
     @Enumerated(EnumType.ORDINAL)
     private Gender gender;
@@ -51,6 +55,30 @@ public class ArtistMember {
 
     private String instagram;
 
+    private MemberRole memberRole;
+
+    private State state;
+
     private String etc;
 
+    public void setArtist(Artist artist) {
+        this.artist = artist;
+        this.agency = artist.getAgency();
+    }
+
+    @Override
+    public ArtistMember getEntity() {
+        return this;
+    }
+
+    @Override
+    public Long getFK() {
+        return this.id;
+    }
+
+    public static ArtistMember getOnlyIdEntity(Long id) {
+        return ArtistMember.builder()
+            .id(id)
+            .build();
+    }
 }

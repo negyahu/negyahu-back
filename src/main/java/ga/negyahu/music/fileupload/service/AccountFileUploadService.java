@@ -2,39 +2,41 @@ package ga.negyahu.music.fileupload.service;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.exception.FileUploadException;
-import ga.negyahu.music.fileupload.entity.AccountFileUpload;
-import ga.negyahu.music.fileupload.entity.AgencyFileUpload;
+import ga.negyahu.music.fileupload.entity.AccountUpload;
+import ga.negyahu.music.fileupload.entity.AgencyUpload;
 import ga.negyahu.music.fileupload.entity.FileUpload;
-import ga.negyahu.music.fileupload.repository.AccountFileUploadRepository;
+import ga.negyahu.music.fileupload.repository.AccountUploadRepository;
 import ga.negyahu.music.fileupload.util.FileUploadUtil;
 import java.io.File;
 import java.io.IOException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service("accountFileUploadService")
 @Transactional
-public class AccountFileUploadService implements FileUploadService<AccountFileUpload>,
+public class AccountFileUploadService implements FileUploadService<AccountUpload>,
     InitializingBean {
 
     private final FileUploadUtil uploadUtil;
-    private final AccountFileUploadRepository uploadRepository;
+    private final AccountUploadRepository uploadRepository;
     private final String filePath;
+    public static final String TYPE = "accounts";
 
     public String getFilePath() {
         return this.filePath;
     }
 
     public AccountFileUploadService(FileUploadUtil uploadUtil,
-        AccountFileUploadRepository uploadRepository,
-        @Value("${upload.account.path:#{null}}") String filePath) throws IOException {
+        AccountUploadRepository uploadRepository,
+        @Value("${upload.path:#{null}}") String filePath) throws IOException {
         this.uploadRepository = uploadRepository;
         if (filePath == null) {
-            String targetDirectory = "upload/account/";
+            String targetDirectory = "upload/accounts/";
             ClassPathResource target = new ClassPathResource("");
             String resourcePath = target.getURI().getPath();
             filePath = resourcePath + targetDirectory;
@@ -55,31 +57,39 @@ public class AccountFileUploadService implements FileUploadService<AccountFileUp
     // Spring Data 는 RuntimeException 만 RollBack하기 때문에 따로 Exception 에 대한 롤백을 지정해야한다.
     @Transactional(rollbackFor = {Exception.class})
     @Override
-    public AccountFileUpload saveFile(MultipartFile multipartFile, FileUpload fileUpload) {
+    public AccountUpload saveFile(MultipartFile multipartFile, FileUpload fileUpload,
+        Account account) {
+        Account entity = (Account) fileUpload.getEntity();
+        boolean deleteFlag = false;
+        File newFile = null;
+        File beforeFile = null;
+        if (!entity.getId().equals(account.getId())) {
+            throw new AccessDeniedException("[ERROR] 권한이 없습니다.");
+        }
         try {
-            Account account = (Account) fileUpload.getEntity();
-            AccountFileUpload upload = existImage(account.getId());
-            if (upload == null) {
-                upload = new AccountFileUpload(multipartFile, this.filePath, account);
-                upload.setAccount(account);
-                upload.setBaseFileUpload(upload);
-                uploadRepository.save(upload);
-            } else {
-                String filePath = upload.getFullFilePath();
+            AccountUpload upload = existImage(account.getId());
+            if (upload != null) {
+                deleteFlag = true;
+                beforeFile = new File(upload.getFullFilePath());
                 upload.setNewMultipartFile(multipartFile);
-                File file = new File(filePath);
-                file.delete();
+            } else {
+                upload = new AccountUpload(multipartFile, this.filePath, TYPE);
+                upload.setAccount(entity);
             }
-
-            File file = new File(upload.getFullFilePath());
-            multipartFile.transferTo(file);
+            AccountUpload save = uploadRepository.saveAndFlush(upload);
+            newFile = new File(upload.getFullFilePath());
+            uploadRepository.updateFKOfAccount(save.getId(), entity.getId());
+            multipartFile.transferTo(newFile);
+            if (deleteFlag) {
+                beforeFile.delete();
+            }
             return upload;
         } catch (IOException e) {
-            throw new FileUploadException("[ERROR] 파일 업로드에 실패했습니다.");
+            throw new FileUploadException();
         }
     }
 
-    private AccountFileUpload existImage(Long accountId) {
+    private AccountUpload existImage(Long accountId) {
         return this.uploadRepository.findFirstByAccountId(accountId);
     }
 
@@ -99,20 +109,20 @@ public class AccountFileUploadService implements FileUploadService<AccountFileUp
 
     @Override
     public File getFileByOwnerId(Long ownerId) {
-        AccountFileUpload file = this.uploadRepository
+        AccountUpload file = this.uploadRepository
             .findFirstByAccountId(ownerId);
         String fullFilePath = file.getFullFilePath();
         return getFileByFileFullName(fullFilePath);
     }
 
     @Override
-    public AgencyFileUpload getFileUploadByOwnerId(Long ownerId) {
+    public AgencyUpload getFileUploadByOwnerId(Long ownerId) {
         return null;
     }
 
     @Override
     public void deleteImageByOwnerId(Long accountId) {
-        AccountFileUpload file = this.uploadRepository.findFirstByAccountId(accountId);
+        AccountUpload file = this.uploadRepository.findFirstByAccountId(accountId);
         File target = new File(file.getFullFilePath());
         boolean result = target.exists();
         if (result) {
@@ -121,7 +131,7 @@ public class AccountFileUploadService implements FileUploadService<AccountFileUp
     }
 
     @Override
-    public AccountFileUpload setOwner(Long targetId, FileUpload fileUpload) {
+    public AccountUpload setOwner(Long targetId, FileUpload fileUpload) {
         return null;
     }
 

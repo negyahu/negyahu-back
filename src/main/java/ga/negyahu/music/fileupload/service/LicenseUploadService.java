@@ -1,12 +1,13 @@
 package ga.negyahu.music.fileupload.service;
 
+import ga.negyahu.music.account.Account;
 import ga.negyahu.music.agency.entity.Agency;
 import ga.negyahu.music.exception.FileNotFoundException;
 import ga.negyahu.music.exception.FileUploadException;
-import ga.negyahu.music.fileupload.entity.AgencyFileUpload;
+import ga.negyahu.music.fileupload.entity.AgencyUpload;
 import ga.negyahu.music.fileupload.entity.FileType;
 import ga.negyahu.music.fileupload.entity.FileUpload;
-import ga.negyahu.music.fileupload.repository.AgencyFileUploadRepository;
+import ga.negyahu.music.fileupload.repository.AgencyUploadRepository;
 import ga.negyahu.music.fileupload.util.FileUploadUtil;
 import java.io.File;
 import java.io.IOException;
@@ -17,46 +18,34 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-@Service("agencyFileUploadService")
+@Service("licenseUploadService")
 @Transactional
-public class AgencyFileUploadService implements FileUploadService<AgencyFileUpload>,
-    InitializingBean {
+public class LicenseUploadService implements FileUploadService<AgencyUpload> {
 
     private final FileUploadUtil uploadUtil;
-    private final AgencyFileUploadRepository uploadRepository;
+    private final AgencyUploadRepository uploadRepository;
     private final String filePath;
+    public static final String TYPE = "licenses";
 
     public String getFilePath() {
         return this.filePath;
     }
 
-    public AgencyFileUploadService(FileUploadUtil uploadUtil,
-        AgencyFileUploadRepository uploadRepository,
-        @Value("${upload.account.path:#{null}}") String filePath) throws IOException {
-        this.uploadRepository = uploadRepository;
-        if (filePath == null) {
-            String targetDirectory = "upload/agency/";
-            ClassPathResource target = new ClassPathResource("");
-            String resourcePath = target.getURI().getPath();
-            filePath = resourcePath + targetDirectory;
-        }
-        this.uploadUtil = uploadUtil;
-        this.filePath = filePath;
-    }
+    public LicenseUploadService(FileUploadUtil uploadUtil,
+        AgencyUploadRepository uploadRepository,
+        @Value("${upload.path:#{null}}") String filePath) throws IOException {
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        File targetDirectory = new File(this.filePath);
-        if (!targetDirectory.exists()) {
-            targetDirectory.mkdirs();
-        }
+        this.uploadRepository = uploadRepository;
+        this.uploadUtil = uploadUtil;
+        this.filePath = createDefaultPath(TYPE, filePath);
     }
 
     @Transactional(rollbackFor = {Exception.class})
     @Override
-    public AgencyFileUpload saveFile(MultipartFile multipartFile, FileUpload fileUpload) {
+    public AgencyUpload saveFile(MultipartFile multipartFile, FileUpload fileUpload,
+        Account account) {
 
-        AgencyFileUpload upload = new AgencyFileUpload();
+        AgencyUpload upload = new AgencyUpload(multipartFile, this.filePath, TYPE);
         upload.setNewMultipartFile(multipartFile);
 
         if (fileUpload == null) {
@@ -89,7 +78,7 @@ public class AgencyFileUploadService implements FileUploadService<AgencyFileUplo
 
     @Override
     public File getFileByOwnerId(Long ownerId) {
-        AgencyFileUpload fileUpload = getFileUploadByOwnerId(ownerId);
+        AgencyUpload fileUpload = getFileUploadByOwnerId(ownerId);
         File file = new File(fileUpload.getFullFilePath());
         if (!file.exists()) {
             throw new FileNotFoundException();
@@ -98,7 +87,7 @@ public class AgencyFileUploadService implements FileUploadService<AgencyFileUplo
     }
 
     @Override
-    public AgencyFileUpload getFileUploadByOwnerId(Long ownerId) {
+    public AgencyUpload getFileUploadByOwnerId(Long ownerId) {
         return this.uploadRepository.findFirstByAgencyId(ownerId)
             .orElseThrow(() -> {
                 throw new FileNotFoundException();
@@ -111,10 +100,10 @@ public class AgencyFileUploadService implements FileUploadService<AgencyFileUplo
     }
 
     @Override
-    public AgencyFileUpload setOwner(Long targetId, FileUpload fileUpload) {
+    public AgencyUpload setOwner(Long targetId, FileUpload fileUpload) {
         Agency agency = (Agency) fileUpload.getEntity();
         try {
-            AgencyFileUpload upload = uploadRepository.findById(targetId).get();
+            AgencyUpload upload = uploadRepository.findById(targetId).get();
             upload.setAgency(agency);
             return upload;
         } catch (Exception e) {

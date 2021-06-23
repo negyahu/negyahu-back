@@ -8,6 +8,8 @@ import ga.negyahu.music.exception.AccountNotFoundException;
 import ga.negyahu.music.mapstruct.AccountMapper;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,7 @@ public class AccountServiceImpl implements AccountService {
 
         Account save = this.accountRepository.save(account);
         eventPublisher.publishEvent(new SignUpEvent(save));
+        
         return save;
     }
 

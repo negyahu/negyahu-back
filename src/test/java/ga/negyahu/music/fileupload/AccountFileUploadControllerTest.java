@@ -5,7 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import ga.negyahu.music.account.repository.AccountRepository;
-import ga.negyahu.music.fileupload.repository.AccountFileUploadRepository;
+import ga.negyahu.music.fileupload.repository.AccountUploadRepository;
 import ga.negyahu.music.utils.FileUploadTestUtil;
 import ga.negyahu.music.utils.annotation.CustomSpringBootTest;
 import ga.negyahu.music.utils.annotation.WithTestUser;
@@ -29,7 +29,7 @@ public class AccountFileUploadControllerTest {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
-    private AccountFileUploadRepository uploadRepository;
+    private AccountUploadRepository uploadRepository;
 
     @AfterEach
     public void destroy() {

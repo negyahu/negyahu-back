@@ -1,53 +1,60 @@
 package ga.negyahu.music.fileupload.service;
 
 import ga.negyahu.music.account.Account;
+import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.artist.entity.Artist;
+import ga.negyahu.music.artist.repository.ArtistMemberRepository;
 import ga.negyahu.music.exception.FileNotFoundException;
 import ga.negyahu.music.exception.FileUploadException;
-import ga.negyahu.music.fileupload.entity.AgencyFileUpload;
-import ga.negyahu.music.fileupload.entity.ArtistFileUpload;
-import ga.negyahu.music.fileupload.entity.BaseFileUpload;
+import ga.negyahu.music.fileupload.entity.AgencyUpload;
+import ga.negyahu.music.fileupload.entity.ArtistUpload;
 import ga.negyahu.music.fileupload.entity.FileUpload;
+import ga.negyahu.music.fileupload.repository.AccountUploadRepository;
 import ga.negyahu.music.fileupload.repository.ArtistFileUploadRepository;
 import ga.negyahu.music.fileupload.util.FileUploadUtil;
 import java.io.File;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service("artistFileUploadService")
-public class ArtistFileUploadService implements FileUploadService<ArtistFileUpload> {
+public class ArtistUploadService implements FileUploadService<ArtistUpload> {
+
+    private static final String TYPE = "artists";
 
     private final ArtistFileUploadRepository artistFileUploadRepository;
     private final FileUploadUtil uploadUtil;
     private final String filePath;
+    private final AccountUploadRepository accountFileUploadRepository;
+    private final AccountRepository accountRepository;
+    private final AccountFileUploadService accountFileUploadService;
+    private final ArtistMemberRepository artistMemberRepository;
 
-    public ArtistFileUploadService(FileUploadUtil uploadUtil,
+    public ArtistUploadService(FileUploadUtil uploadUtil,
         ArtistFileUploadRepository uploadRepository,
-        @Value("${upload.artist.path:#{null}}") String filePath) throws IOException {
+        @Value("${upload.path:#{null}}") String filePath,
+        AccountUploadRepository accountFileUploadRepository,
+        AccountRepository accountRepository,
+        AccountFileUploadService accountFileUploadService,
+        ArtistMemberRepository artistMemberRepository) throws IOException {
         this.artistFileUploadRepository = uploadRepository;
-        if (filePath == null) {
-            String targetDirectory = "upload/artists/";
-            ClassPathResource target = new ClassPathResource("");
-            String resourcePath = target.getURI().getPath();
-            filePath = resourcePath + targetDirectory;
-        }
+        this.accountFileUploadRepository = accountFileUploadRepository;
+        this.accountRepository = accountRepository;
+        this.accountFileUploadService = accountFileUploadService;
+        this.artistMemberRepository = artistMemberRepository;
         this.uploadUtil = uploadUtil;
-        this.filePath = filePath;
+        this.filePath = createDefaultPath("artist", filePath);
     }
 
     @Transactional
     @Override
-    public ArtistFileUpload saveFile(MultipartFile multipartFile, FileUpload fileUpload) {
+    public ArtistUpload saveFile(MultipartFile multipartFile, FileUpload fileUpload,
+        Account account) {
         try {
-            ArtistFileUpload image = new ArtistFileUpload();
-            BaseFileUpload base = new BaseFileUpload(multipartFile, this.filePath);
-            image.setBaseFileUpload(base);
-            image.createFileName();
-            ArtistFileUpload save = this.artistFileUploadRepository.save(image);
+            ArtistUpload image = new ArtistUpload(multipartFile, filePath, TYPE);
+            ArtistUpload save = this.artistFileUploadRepository.save(image);
             String fullFilePath = save.getFullFilePath();
             multipartFile.transferTo(new File(fullFilePath));
             return save;
@@ -80,7 +87,7 @@ public class ArtistFileUploadService implements FileUploadService<ArtistFileUplo
     }
 
     @Override
-    public AgencyFileUpload getFileUploadByOwnerId(Long ownerId) {
+    public AgencyUpload getFileUploadByOwnerId(Long ownerId) {
         return null;
     }
 
@@ -95,8 +102,8 @@ public class ArtistFileUploadService implements FileUploadService<ArtistFileUplo
     }
 
     @Override
-    public ArtistFileUpload setOwner(Long targetId, FileUpload fileUpload) {
-        ArtistFileUpload upload = null;
+    public ArtistUpload setOwner(Long targetId, FileUpload fileUpload) {
+        ArtistUpload upload = null;
         // 사진이 없더라도 기존의 트랜잭션에 롤백을 시키지 않는다.
         try {
             upload = this.artistFileUploadRepository.findById(targetId).get();

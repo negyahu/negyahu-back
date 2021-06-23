@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 import ga.negyahu.music.exception.AccountNotFoundException;
 import ga.negyahu.music.exception.AreaNotFountException;
+import ga.negyahu.music.exception.ArtistNotFoundException;
 import ga.negyahu.music.exception.BadMessageRequestException;
 import ga.negyahu.music.exception.FileNotFoundException;
 import ga.negyahu.music.exception.FileUploadException;
@@ -69,4 +70,8 @@ public class BaseExceptionHandler {
         return ResponseEntity.notFound().build();
     }
 
+    @ExceptionHandler(value = ArtistNotFoundException.class)
+    public ResponseEntity artistNotFoundExceptionExceptionHandler(ArtistNotFoundException e) {
+        return ResponseEntity.notFound().build();
+    }
 }

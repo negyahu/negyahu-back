@@ -14,13 +14,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-public class AgencyFileUpload extends BaseFileUpload {
+public class AgencyUpload extends BaseFileUpload {
+
+    public AgencyUpload(MultipartFile multipartFile, String filePath, String type) {
+        super(multipartFile, filePath, type);
+    }
 
     @Id
     @GeneratedValue
