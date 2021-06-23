@@ -13,25 +13,5 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class AccountServiceImplTest {
 
-//    @Autowired
-//    AccountRepository accountRepository;
-//    @Autowired
-//    PasswordEncoder passwordEncoder;
-//    @Autowired
-//    ApplicationEventPublisher eventPublisher;
-
-    @Test
-    public void signUpTest(Account account) {
-//        String encode = passwordEncoder.encode(account.getPassword());
-//        account.setPassword(encode);
-//        generateCode(account);
-//
-//        Account save = this.accountRepository.save(account);
-//        eventPublisher.publishEvent(new SignUpEvent(save));
-    }
-
-    public void 회원가입_회원중복() {
-
-    }
 
 }

@@ -1,6 +1,9 @@
 package ga.negyahu.music.artist.entity;
 
+import static java.util.Objects.isNull;
+
 import ga.negyahu.music.account.Account;
+import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.agency.entity.Agency;
 import ga.negyahu.music.fileupload.entity.FileUpload;
@@ -13,12 +16,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.InitializingBean;
 
 @Entity
 @Getter
@@ -55,7 +60,7 @@ public class ArtistMember implements FileUpload<ArtistMember> {
 
     private String instagram;
 
-    private MemberRole memberRole;
+    private ArtistRole artistRole;
 
     private State state;
 
@@ -64,6 +69,21 @@ public class ArtistMember implements FileUpload<ArtistMember> {
     public void setArtist(Artist artist) {
         this.artist = artist;
         this.agency = artist.getAgency();
+    }
+
+    public void activeArtist() {
+        this.artistRole = ArtistRole.ARTIST;
+    }
+
+    public void activeFan() {
+        this.artistRole = ArtistRole.FAN;
+    }
+
+    @PrePersist
+    public void init() {
+        if (this.state == null) {
+            this.state = State.ACTIVE;
+        }
     }
 
     @Override
@@ -81,4 +101,5 @@ public class ArtistMember implements FileUpload<ArtistMember> {
             .id(id)
             .build();
     }
+
 }

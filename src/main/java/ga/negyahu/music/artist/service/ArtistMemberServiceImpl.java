@@ -6,7 +6,7 @@ import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.artist.entity.Artist;
 import ga.negyahu.music.artist.entity.ArtistMember;
-import ga.negyahu.music.artist.entity.MemberRole;
+import ga.negyahu.music.artist.entity.ArtistRole;
 import ga.negyahu.music.artist.repository.ArtistMemberRepository;
 import ga.negyahu.music.artist.repository.ArtistRepository;
 import ga.negyahu.music.exception.AgencyNotFoundException;
@@ -46,8 +46,7 @@ public class ArtistMemberServiceImpl implements ArtistMemberService {
         Account save = signUpArtist(member.getAccount());
         member.setArtist(artist);
         member.setAccount(save);
-        member.setState(State.ACTIVE);
-        member.setMemberRole(MemberRole.ARTIST);
+        member.activeArtist();
         return this.artistMemberRepository.save(member);
     }
 

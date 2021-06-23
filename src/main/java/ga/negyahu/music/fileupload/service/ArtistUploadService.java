@@ -11,7 +11,7 @@ import ga.negyahu.music.fileupload.entity.ArtistUpload;
 import ga.negyahu.music.fileupload.entity.FileUpload;
 import ga.negyahu.music.fileupload.repository.AccountUploadRepository;
 import ga.negyahu.music.fileupload.repository.ArtistFileUploadRepository;
-import ga.negyahu.music.fileupload.util.FileUploadUtil;
+import ga.negyahu.music.fileupload.util.FileUploadUtils;
 import java.io.File;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,15 +25,13 @@ public class ArtistUploadService implements FileUploadService<ArtistUpload> {
     private static final String TYPE = "artists";
 
     private final ArtistFileUploadRepository artistFileUploadRepository;
-    private final FileUploadUtil uploadUtil;
     private final String filePath;
     private final AccountUploadRepository accountFileUploadRepository;
     private final AccountRepository accountRepository;
     private final AccountFileUploadService accountFileUploadService;
     private final ArtistMemberRepository artistMemberRepository;
 
-    public ArtistUploadService(FileUploadUtil uploadUtil,
-        ArtistFileUploadRepository uploadRepository,
+    public ArtistUploadService(ArtistFileUploadRepository uploadRepository,
         @Value("${upload.path:#{null}}") String filePath,
         AccountUploadRepository accountFileUploadRepository,
         AccountRepository accountRepository,
@@ -44,7 +42,6 @@ public class ArtistUploadService implements FileUploadService<ArtistUpload> {
         this.accountRepository = accountRepository;
         this.accountFileUploadService = accountFileUploadService;
         this.artistMemberRepository = artistMemberRepository;
-        this.uploadUtil = uploadUtil;
         this.filePath = createDefaultPath("artist", filePath);
     }
 

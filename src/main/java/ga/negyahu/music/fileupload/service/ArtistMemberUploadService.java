@@ -9,7 +9,7 @@ import ga.negyahu.music.fileupload.entity.AgencyUpload;
 import ga.negyahu.music.fileupload.entity.ArtistMemberUpload;
 import ga.negyahu.music.fileupload.entity.FileUpload;
 import ga.negyahu.music.fileupload.repository.ArtistMemberUploadRepository;
-import ga.negyahu.music.fileupload.util.FileUploadUtil;
+import ga.negyahu.music.fileupload.util.FileUploadUtils;
 import java.io.File;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,18 +21,15 @@ public class ArtistMemberUploadService implements FileUploadService<ArtistMember
 
     private final ArtistMemberUploadRepository uploadRepository;
     private final ArtistMemberRepository artistMemberRepository;
-    private final FileUploadUtil uploadUtil;
     private final String filePath;
     public static final String TYPE = "members";
 
 
-    public ArtistMemberUploadService(FileUploadUtil uploadUtil,
-        ArtistMemberUploadRepository uploadRepository,
+    public ArtistMemberUploadService(ArtistMemberUploadRepository uploadRepository,
         ArtistMemberRepository artistMemberRepository,
         @Value("${upload.path:#{null}}") String filePath) throws IOException {
         this.uploadRepository = uploadRepository;
         this.artistMemberRepository = artistMemberRepository;
-        this.uploadUtil = uploadUtil;
         this.filePath = createDefaultPath(TYPE, filePath);
     }
 

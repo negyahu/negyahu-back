@@ -2,10 +2,12 @@ package ga.negyahu.music.fileupload.controller;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.http.ResponseEntity.*;
 
 import ga.negyahu.music.exception.FileNotFoundException;
 import ga.negyahu.music.fileupload.entity.BaseFileUpload;
 import ga.negyahu.music.fileupload.service.ArtistMemberUploadService;
+import ga.negyahu.music.fileupload.util.FileUploadUtils;
 import io.swagger.models.Response;
 import java.io.File;
 import java.io.IOException;
@@ -35,16 +37,11 @@ public class UploadController {
     }
 
     @GetMapping(UPLOAD_URL_PREFIX + "/{type}" + "/{finePath}")
-    public ResponseEntity loadImage(@PathVariable("finePath") String finePath,
+    public ResponseEntity<byte[]> loadImage(@PathVariable("finePath") String filePath,
         @PathVariable("type") String type) {
         try {
-            File file = new File(fileDirectoryPath + "/" + type + "/" + finePath);
-            if (!file.exists()) {
-                throw new FileNotFoundException();
-            }
-            IOUtils.toByteArray(file.toURI());
-            return ResponseEntity
-                .ok()
+            File file = FileUploadUtils.getFile(fileDirectoryPath + "/" + type + "/" + filePath);
+            return ok()
                 .contentType(MediaType.IMAGE_PNG)
                 .body(IOUtils.toByteArray(file.toURI()))
                 ;
@@ -52,6 +49,8 @@ public class UploadController {
             throw new FileNotFoundException();
         }
     }
+
+
 
     public static final URI createUri(String path) {
         return createUri("", path);
@@ -64,17 +63,17 @@ public class UploadController {
     public static final ResponseEntity createResponseEntity(String type, String path,
         Object content) {
         URI uri = createUri(type, path);
-        return ResponseEntity.created(uri).body(content);
+        return created(uri).body(content);
     }
 
     public static final ResponseEntity createResponseEntity(String path, Object content) {
         URI uri = createUri(path);
-        return ResponseEntity.created(uri).body(content);
+        return created(uri).body(content);
     }
 
     public static final ResponseEntity createResponseEntity(BaseFileUpload fileUpload) {
         URI uri = createUri(fileUpload.getImageUrl());
-        return ResponseEntity.created(uri).body(fileUpload);
+        return created(uri).body(fileUpload);
     }
 
 

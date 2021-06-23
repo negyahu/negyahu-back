@@ -6,7 +6,7 @@ import ga.negyahu.music.fileupload.entity.AccountUpload;
 import ga.negyahu.music.fileupload.entity.AgencyUpload;
 import ga.negyahu.music.fileupload.entity.FileUpload;
 import ga.negyahu.music.fileupload.repository.AccountUploadRepository;
-import ga.negyahu.music.fileupload.util.FileUploadUtil;
+import ga.negyahu.music.fileupload.util.FileUploadUtils;
 import java.io.File;
 import java.io.IOException;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class AccountFileUploadService implements FileUploadService<AccountUpload>,
     InitializingBean {
 
-    private final FileUploadUtil uploadUtil;
     private final AccountUploadRepository uploadRepository;
     private final String filePath;
     public static final String TYPE = "accounts";
@@ -31,8 +30,7 @@ public class AccountFileUploadService implements FileUploadService<AccountUpload
         return this.filePath;
     }
 
-    public AccountFileUploadService(FileUploadUtil uploadUtil,
-        AccountUploadRepository uploadRepository,
+    public AccountFileUploadService(AccountUploadRepository uploadRepository,
         @Value("${upload.path:#{null}}") String filePath) throws IOException {
         this.uploadRepository = uploadRepository;
         if (filePath == null) {
@@ -41,7 +39,6 @@ public class AccountFileUploadService implements FileUploadService<AccountUpload
             String resourcePath = target.getURI().getPath();
             filePath = resourcePath + targetDirectory;
         }
-        this.uploadUtil = uploadUtil;
         this.filePath = filePath;
     }
 

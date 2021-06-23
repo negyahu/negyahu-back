@@ -8,12 +8,10 @@ import ga.negyahu.music.fileupload.entity.AgencyUpload;
 import ga.negyahu.music.fileupload.entity.FileType;
 import ga.negyahu.music.fileupload.entity.FileUpload;
 import ga.negyahu.music.fileupload.repository.AgencyUploadRepository;
-import ga.negyahu.music.fileupload.util.FileUploadUtil;
+import ga.negyahu.music.fileupload.util.FileUploadUtils;
 import java.io.File;
 import java.io.IOException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class LicenseUploadService implements FileUploadService<AgencyUpload> {
 
-    private final FileUploadUtil uploadUtil;
     private final AgencyUploadRepository uploadRepository;
     private final String filePath;
     public static final String TYPE = "licenses";
@@ -31,12 +28,9 @@ public class LicenseUploadService implements FileUploadService<AgencyUpload> {
         return this.filePath;
     }
 
-    public LicenseUploadService(FileUploadUtil uploadUtil,
-        AgencyUploadRepository uploadRepository,
+    public LicenseUploadService( AgencyUploadRepository uploadRepository,
         @Value("${upload.path:#{null}}") String filePath) throws IOException {
-
         this.uploadRepository = uploadRepository;
-        this.uploadUtil = uploadUtil;
         this.filePath = createDefaultPath(TYPE, filePath);
     }
 

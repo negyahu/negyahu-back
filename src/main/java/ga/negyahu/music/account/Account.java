@@ -115,13 +115,21 @@ public class Account implements FileUpload {
         }
     }
 
+    public void permit(){
+        this.state = State.ACTIVE;
+    }
+
+    public void ignore(){
+        this.state = State.IGNORE;
+    }
+
     @PrePersist
     public void init() {
         if (isNull(this.role)) {
             this.role = Role.USER;
         }
         if (isNull(this.state)) {
-            this.state = State.ACTIVE;
+            this.state = State.WAIT;
         }
     }
 

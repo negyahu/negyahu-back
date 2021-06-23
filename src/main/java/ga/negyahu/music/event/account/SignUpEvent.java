@@ -12,11 +12,6 @@ public class SignUpEvent extends ApplicationEvent {
 
     public SignUpEvent(Account account) {
         super(account);
-        this.signUpMail = new SignUpMail(account,"");
-    }
-
-    public SignUpEvent(Account account,String message) {
-        super(account);
-        this.signUpMail = new SignUpMail(account,message);
+        this.signUpMail = new SignUpMail(account, "");
     }
 }

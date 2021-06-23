@@ -39,9 +39,6 @@ public class AgencyDto {
     @Schema(defaultValue = "2021-01-01", description = "소속사 등록일", example = "2021-01-01")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate signUpDate;
-//
-//    @Schema(defaultValue = "youzheng.ent@gmail.com", description = "대표 이메일, 로그인시 사용", example = "youzheng.ent@gmail.com")
-//    private String email;
 
     @QueryProjection
     public AgencyDto(Long id, String nameKR, String nameEN, String businessNumber,

@@ -97,6 +97,16 @@ public class Agency implements FileUpload {
         return this.account.getId().equals(account.getId());
     }
 
+    public void permit() {
+        this.state = State.ACTIVE;
+        this.account.permit();
+    }
+
+    public void ignore() {
+        this.state = State.IGNORE;
+        this.account.ignore();
+    }
+
     @Override
     public Object getEntity() {
         if (this.id == null) {

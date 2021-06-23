@@ -37,9 +37,9 @@ public class AccountRepositoryTest {
         Account account = TestUtils.createDefaultAccount();
         Account save = this.accountRepository.save(account);
 
-        // when : 조회하는 계정 상태는 활성화
+        // when : 조회하는 계정 상태는 WAIT (이메일 인증 대기)
         assertThrows(NoSuchElementException.class, () -> {
-            this.accountRepository.findFirstByIdAndStateIsNot(save.getId(), State.ACTIVE).get();
+            this.accountRepository.findFirstByIdAndStateIsNot(save.getId(), State.WAIT).get();
         }, "현재 활성화인 계정을 제외하고 조회하기 때문에, 아무것도 찾지 못한다.");
 
         // then
@@ -56,7 +56,7 @@ public class AccountRepositoryTest {
         Account account = TestUtils.createDefaultAccount();
         Account save = this.accountRepository.save(account);
 
-        assertEquals(State.ACTIVE, save.getState());
+        assertEquals(State.WAIT, save.getState());
         // when : 상태를 변경
         this.accountRepository.modifyState(save.getId(), State.DELETED);
 

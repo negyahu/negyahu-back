@@ -1,18 +1,16 @@
 package ga.negyahu.music.fileupload.controller;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.exception.ResultMessage;
 import ga.negyahu.music.fileupload.entity.AccountUpload;
 import ga.negyahu.music.fileupload.service.FileUploadService;
-import ga.negyahu.music.fileupload.util.FileUploadUtil;
+import ga.negyahu.music.fileupload.util.FileUploadUtils;
 import ga.negyahu.music.security.annotation.LoginUser;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -34,7 +32,6 @@ public class AccountFileUploadController implements InitializingBean {
 
     @Qualifier("accountFileUploadService")
     private final FileUploadService<AccountUpload> accountFileUploadService;
-    private final FileUploadUtil uploadUtil;
 
     public static final String ACCOUNT_FILE_URL = "/api/accounts/{id}/image";
     public static final String DEFAULT_FORMAT = "png";
@@ -101,7 +98,7 @@ public class AccountFileUploadController implements InitializingBean {
                 .body(ResultMessage.createFailMessage("[ERROR] 존재하지 않는 이미지입니다."));
         }
 
-        ByteArrayOutputStream byteArrayOutputStream = this.uploadUtil.resizingImage(width, height,
+        ByteArrayOutputStream byteArrayOutputStream = FileUploadUtils.resizingImage(width, height,
             file);
         return ResponseEntity
             .ok()

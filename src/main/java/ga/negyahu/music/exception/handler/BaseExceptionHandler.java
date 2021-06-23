@@ -22,27 +22,30 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class BaseExceptionHandler {
 
     @ExceptionHandler(value = AccountNotFoundException.class)
-    public ResponseEntity accountNotFoundExceptionHandler() {
+    public ResponseEntity<ResultMessage> accountNotFoundExceptionHandler() {
         return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(value = AreaNotFountException.class)
-    public ResponseEntity areaNotFountExceptionHandler() {
+    public ResponseEntity<ResultMessage> areaNotFountExceptionHandler() {
         return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(value = MessageNotFoundException.class)
-    public ResponseEntity messageNotFoundExceptionHandler() {
+    public ResponseEntity<ResultMessage> messageNotFoundExceptionHandler() {
         return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(value = MessageAlreadyOpenException.class)
-    public ResponseEntity messageAlreadyOpenExceptionHandler(MessageAlreadyOpenException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
+    public ResponseEntity<ResultMessage> messageAlreadyOpenExceptionHandler(
+        MessageAlreadyOpenException e) {
+        ResultMessage message = ResultMessage.createFailMessage(e.getMessage());
+        return ResponseEntity.badRequest().body(message);
     }
 
     @ExceptionHandler(value = BadMessageRequestException.class)
-    public ResponseEntity badMessageRequestExceptionHandler(BadMessageRequestException e) {
+    public ResponseEntity<ResultMessage> badMessageRequestExceptionHandler(
+        BadMessageRequestException e) {
         ResultMessage message = ResultMessage.builder()
             .message(e.getMessage())
             .result(Result.FAIL)
@@ -51,7 +54,7 @@ public class BaseExceptionHandler {
     }
 
     @ExceptionHandler(value = AccessDeniedException.class)
-    public ResponseEntity accessDeniedExceptionHandler(AccessDeniedException e) {
+    public ResponseEntity<ResultMessage> accessDeniedExceptionHandler(AccessDeniedException e) {
         ResultMessage message = ResultMessage.builder()
             .message(e.getMessage())
             .result(Result.FAIL)
@@ -60,18 +63,20 @@ public class BaseExceptionHandler {
     }
 
     @ExceptionHandler(value = FileUploadException.class)
-    public ResponseEntity fileUploadExceptionHandler(FileUploadException e) {
+    public ResponseEntity<ResultMessage> fileUploadExceptionHandler(FileUploadException e) {
         ResultMessage failMessage = ResultMessage.createFailMessage(e.getMessage());
         return ResponseEntity.badRequest().body(failMessage);
     }
 
     @ExceptionHandler(value = FileNotFoundException.class)
-    public ResponseEntity fileNotFoundExceptionExceptionHandler(FileNotFoundException e) {
+    public ResponseEntity<ResultMessage> fileNotFoundExceptionExceptionHandler(
+        FileNotFoundException e) {
         return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(value = ArtistNotFoundException.class)
-    public ResponseEntity artistNotFoundExceptionExceptionHandler(ArtistNotFoundException e) {
+    public ResponseEntity<ResultMessage> artistNotFoundExceptionExceptionHandler(
+        ArtistNotFoundException e) {
         return ResponseEntity.notFound().build();
     }
 }

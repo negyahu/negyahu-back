@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import ga.negyahu.music.account.Account;
 import ga.negyahu.music.fileupload.entity.AccountUpload;
 import ga.negyahu.music.fileupload.repository.AccountUploadRepository;
-import ga.negyahu.music.fileupload.util.FileUploadUtil;
+import ga.negyahu.music.fileupload.util.FileUploadUtils;
 import ga.negyahu.music.utils.FileUploadTestUtil;
 import ga.negyahu.music.utils.TestUtils;
 import java.awt.image.BufferedImage;
@@ -30,15 +30,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(value = {SpringExtension.class})
 @ContextConfiguration(classes = {
-    FileUploadUtil.class,
+    FileUploadUtils.class,
     AccountFileUploadService.class,
 },
     initializers = ConfigDataApplicationContextInitializer.class
 )
 public class AccountFileUploadServiceTest {
 
-    @Autowired
-    public FileUploadUtil fileUploadUtil;
     @Autowired
     private AccountFileUploadService fileUploadService;
     @MockBean
