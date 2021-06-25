@@ -80,7 +80,7 @@ public class Agency implements FileUpload {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "agency")
     @Builder.Default
-    private List<Artist> artist = new ArrayList<>();
+    private List<Artist> artists = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "agency")
     @Builder.Default

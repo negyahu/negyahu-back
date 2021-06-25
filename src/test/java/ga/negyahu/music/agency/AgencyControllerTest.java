@@ -30,6 +30,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -135,7 +136,8 @@ public class AgencyControllerTest {
         perform.andExpect(jsonPath("$.count", is(accounts.size())));
 
         // then : 2명의 매니저가 등록되있다.
-        List<AgencyMember> members = agencyMemberRepository.findAllByAgencyId(agency.getId());
+        List<AgencyMember> members = agencyMemberRepository.findAllByAgencyId(agency.getId(),
+            PageRequest.of(0,10));
         assertEquals(addCount, members.size());
     }
 

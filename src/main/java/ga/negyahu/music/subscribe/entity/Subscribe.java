@@ -1,7 +1,11 @@
-package ga.negyahu.music.agency.entity;
+package ga.negyahu.music.subscribe.entity;
+
+import static java.util.Objects.isNull;
 
 import ga.negyahu.music.account.Account;
+import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.entity.State;
+import ga.negyahu.music.artist.entity.Artist;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,8 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -23,53 +25,33 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
+@EqualsAndHashCode(of = "id")
 @EntityListeners(AuditingEntityListener.class)
-@Table(
-    name = "agency_member",
-    uniqueConstraints = {
-        @UniqueConstraint(
-            columnNames = {"agency_id", "account_id"}
-        )
-    }
-)
-@EqualsAndHashCode(of = {"id", "agency", "account"})
-public class AgencyMember {
+public class Subscribe {
 
     @Id
     @GeneratedValue
-    @Column(name = "agency_member_id")
+    @Column(name = "subscribe_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "agency_id")
-    private Agency agency;
-
-    @Column(unique = true)
-    private String nickname;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = " account_id", nullable = false)
     private Account account;
 
-    private AgencyRole agencyRole;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "artist_id",nullable = false)
+    private Artist artist;
 
-    private State state;
+    @Column(name = "nickname",nullable = false)
+    private String nickname;
 
     @CreatedDate
-    private LocalDate registerDate;
-
-    @PrePersist
-    private void init() {
-        if (agencyRole == null) {
-            this.agencyRole = AgencyRole.MEMBER;
-        }
-        this.state = State.WAIT;
-    }
+    private LocalDate subscribeDate;
 
 }

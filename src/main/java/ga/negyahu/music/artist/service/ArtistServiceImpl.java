@@ -6,6 +6,9 @@ import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.account.repository.AccountRepository;
 import ga.negyahu.music.agency.entity.Agency;
+import ga.negyahu.music.agency.entity.AgencyMember;
+import ga.negyahu.music.agency.entity.AgencyRole;
+import ga.negyahu.music.agency.repository.AgencyMemberRepository;
 import ga.negyahu.music.agency.repository.AgencyRepository;
 import ga.negyahu.music.artist.entity.Artist;
 import ga.negyahu.music.artist.entity.ArtistMember;
@@ -32,6 +35,7 @@ public class ArtistServiceImpl implements ArtistService {
     private final ArtistFileUploadRepository artistFileUploadRepository;
     private final AgencyRepository agencyRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AgencyMemberRepository agencyMemberRepository;
 
     @Override
     public Artist register(Artist artist, Long agencyId, Account user) {
@@ -51,7 +55,20 @@ public class ArtistServiceImpl implements ArtistService {
 
         artist.setAgency(agency);
         Artist save = this.artistRepository.save(artist);
+        createDefaultMember(agency);
         return save;
+    }
+
+    private AgencyMember createDefaultMember(Agency agency){
+        Account boss = agency.getAccount();
+        AgencyMember member = AgencyMember.builder()
+            .account(boss)
+            .agency(agency)
+            .agencyRole(AgencyRole.CEO)
+            .state(State.ACTIVE)
+            .nickname(agency.getNameKR())
+            .build();
+        return this.agencyMemberRepository.save(member);
     }
 
     private Agency findAgencyByIdAndAccount(Long agencyId, Account user) {

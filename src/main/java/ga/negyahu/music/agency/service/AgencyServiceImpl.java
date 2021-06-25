@@ -4,6 +4,7 @@ import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.account.repository.AccountRepository;
+import ga.negyahu.music.agency.dto.AgencyMeDto;
 import ga.negyahu.music.agency.entity.Agency;
 import ga.negyahu.music.agency.entity.AgencyMember;
 import ga.negyahu.music.agency.entity.AgencyRole;
@@ -102,6 +103,12 @@ public class AgencyServiceImpl implements AgencyService {
     @Override
     public boolean isManager(Long id, Long agencyMemberId) {
         return this.agencyMemberRepository.existsByAgency_IdAndAccount_Id(id, agencyMemberId);
+    }
+
+    @Override
+    public AgencyMeDto fetchMe(Account account) {
+         AgencyMeDto agencyMeDto = this.agencyRepository.findByRole(account);
+        return null;
     }
 
 

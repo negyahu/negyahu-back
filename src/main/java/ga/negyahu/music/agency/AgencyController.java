@@ -6,6 +6,7 @@ import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.entity.Role;
 import ga.negyahu.music.agency.dto.AgencyCreateDto;
 import ga.negyahu.music.agency.dto.AgencyDto;
+import ga.negyahu.music.agency.dto.AgencyMeDto;
 import ga.negyahu.music.agency.dto.ManagerDto;
 import ga.negyahu.music.agency.entity.Agency;
 import ga.negyahu.music.agency.service.AgencyService;
@@ -22,6 +23,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -93,17 +95,18 @@ public class AgencyController {
     @ResponseStatus(value = HttpStatus.OK)
     @AgencyIDParam
     @GetMapping("/{id}")
-    public ResponseEntity fetch(@LoginUser Account user, @PathVariable("id") Long agencyId) {
+    public ResponseEntity<AgencyDto> fetch(@LoginUser Account user, @PathVariable("id") Long agencyId) {
         Agency agency = agencyService.fetchOwner(agencyId);
-        Account account = agency.getAccount();
         AgencyDto dto = mapper.toDto(agency);
         return ResponseEntity.ok(dto);
     }
 
-    /*
-     * Artist
-     *
-     * */
+    @GetMapping("/me")
+    public ResponseEntity<AgencyMeDto> fetchMe(@LoginUser Account user){
+        AgencyMeDto agencyMeDto = this.agencyService.fetchMe(user);
+        return ResponseEntity.ok(agencyMeDto);
+    }
+
     /*
      * 소속사에 소속된 모든 아티스트 조회
      * */

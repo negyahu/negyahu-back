@@ -3,7 +3,7 @@ package ga.negyahu.music.artist.entity;
 import ga.negyahu.music.agency.entity.Agency;
 import ga.negyahu.music.fileupload.entity.ArtistUpload;
 import ga.negyahu.music.fileupload.entity.FileUpload;
-import ga.negyahu.music.subscribe.Subscribe;
+import ga.negyahu.music.subscribe.entity.Subscribe;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

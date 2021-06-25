@@ -5,6 +5,7 @@ import ga.negyahu.music.artist.entity.Artist;
 import ga.negyahu.music.artist.dto.ArtistCreateDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(uses = {ArtistMemberMapper.class})
@@ -15,6 +16,8 @@ public interface ArtistMapper {
     @Mapping(source = "imageId", target = "profileImage.id")
     Artist from(ArtistCreateDto createDto);
 
+    @Named("artistToDto")
     @Mapping(source = "agency", target = "agencyDto")
+//    @Mapping(target = "entity", ignore = true)
     ArtistDto toDto(Artist register);
 }

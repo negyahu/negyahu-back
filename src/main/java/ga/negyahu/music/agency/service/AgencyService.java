@@ -1,6 +1,7 @@
 package ga.negyahu.music.agency.service;
 
 import ga.negyahu.music.account.Account;
+import ga.negyahu.music.agency.dto.AgencyMeDto;
 import ga.negyahu.music.agency.entity.Agency;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,4 +18,7 @@ public interface AgencyService {
 
 
     boolean isManager(Long id, Long agencyMemberId);
+
+    AgencyMeDto fetchMe(Account account);
+
 }

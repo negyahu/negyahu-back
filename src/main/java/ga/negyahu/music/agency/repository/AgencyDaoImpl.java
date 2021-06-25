@@ -7,12 +7,12 @@ import static java.util.Objects.isNull;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import ga.negyahu.music.account.Account;
 import ga.negyahu.music.account.entity.State;
 import ga.negyahu.music.agency.dto.AgencyDto;
+import ga.negyahu.music.agency.dto.AgencyMeDto;
 import ga.negyahu.music.agency.dto.AgencySearch;
 import ga.negyahu.music.agency.dto.QAgencyDto;
-import java.util.Locale;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -41,9 +41,15 @@ public class AgencyDaoImpl implements AgencyDao {
         return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
+    @Override
+    public AgencyMeDto findByRole(Account user) {
+
+        return null;
+    }
+
     private BooleanBuilder addSearchQuery(AgencySearch search) {
         BooleanBuilder builder = new BooleanBuilder();
-        if (isNull(search)) {
+        if (isNull(search) || isNull(search.getType())) {
             return null;
         }
 

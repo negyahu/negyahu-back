@@ -21,10 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.IOUtils;
@@ -98,6 +96,7 @@ public class DataApplicationRunner implements ApplicationRunner {
             .mobile("01011112222")
             .password(passwordEncoder.encode("dnwjd123"))
             .certifiedEmail(true)
+            .role(Role.ADMIN)
             .build();
         Account test2 = Account.builder()
             .username("황유정")
@@ -110,6 +109,11 @@ public class DataApplicationRunner implements ApplicationRunner {
         accountRepository.save(test1);
         accountRepository.save(test2);
     }
+
+//    private Account createAccount(){
+//        return Account.builder()
+//            .state()
+//    }
 
     public void saveAgency() {
         AgencyCreateDto bighit = AgencyCreateDto.builder()
